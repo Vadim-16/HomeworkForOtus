@@ -4,8 +4,8 @@ import java.util.*;
 
 public class DIYArrayList<T> implements List<T> {
 
-    public int size;
-    public Object[] array = new Object[10];
+    private int size;
+    private Object[] array = new Object[10];
 
     public static void main(String[] args) {
         DIYArrayList<Integer> list1 = new DIYArrayList<>();
@@ -86,7 +86,7 @@ public class DIYArrayList<T> implements List<T> {
         throw new UnsupportedOperationException();
     }
 
-    public void grow() {
+    private void grow() {
         Object[] tempArray = new Object[array.length*2];
         for (int i = 0; i < array.length; i++) {
             tempArray[i] = array[i];
@@ -146,12 +146,9 @@ public class DIYArrayList<T> implements List<T> {
         return (T)array[index];
     }
 
-    public T array(int index) {
-        return (T) array[index];
-    }
 
     public T set(int index, T element) {
-        T oldValue = array(index);
+        T oldValue = get(index);
         array[index] = element;
         return oldValue;
     }
@@ -191,7 +188,7 @@ public class DIYArrayList<T> implements List<T> {
         throw new UnsupportedOperationException();
     }
 
-    public class ListItr implements ListIterator<T>{
+    private class ListItr implements ListIterator<T>{
         int cursor;
         int lastRet = -1;
 
