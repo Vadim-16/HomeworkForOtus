@@ -12,6 +12,7 @@
     <modules>
         <module>HomeWork-01</module>
         <module>HomeWork-02-List</module>
+        <module>HomeWork-03-Tests</module>
     </modules>
 
     <properties>
