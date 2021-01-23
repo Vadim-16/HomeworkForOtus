@@ -9,11 +9,11 @@ import java.util.ArrayList;
 public class TestRunner {
 
 
-    public void runTest(TestingClass testingClass) {
+    public static void runTest(TestingClass testingClass) {
 
         System.out.println("\nRunning Test\n");
 
-        System.out.println("Searching for @BeforeAll annotations");
+        System.out.println("Executing @BeforeAll annotations");
         Class<? extends TestingClass> BAClass = testingClass.getClass();
         Method[] declaredBAMethods = BAClass.getDeclaredMethods();
         for (Method method : declaredBAMethods) {
@@ -27,7 +27,7 @@ public class TestRunner {
         System.out.println();
 
 
-        System.out.println("Searching for @BeforeEach annotations");
+        System.out.println("Executing @BeforeEach annotations");
         Class<? extends TestingClass> BEClass = testingClass.getClass();
         Method[] declaredBEMethods = BEClass.getDeclaredMethods();
         for (Method method : declaredBEMethods) {
@@ -41,7 +41,7 @@ public class TestRunner {
         System.out.println();
 
 
-        System.out.println("Searching for @Test annotations");
+        System.out.println("Executing @Test annotations");
         Class<? extends TestingClass> TestClass = testingClass.getClass();
         Method[] declaredTestMethods = TestClass.getDeclaredMethods();
         for (Method method : declaredTestMethods) {
@@ -55,7 +55,7 @@ public class TestRunner {
         System.out.println();
 
 
-        System.out.println("Searching for @AfterEach annotations");
+        System.out.println("Executing @AfterEach annotations");
         Class<? extends TestingClass> AEClass = testingClass.getClass();
         Method[] declaredAEMethods = AEClass.getDeclaredMethods();
         for (Method method : declaredAEMethods) {
@@ -68,7 +68,7 @@ public class TestRunner {
         }
         System.out.println();
 
-        System.out.println("Searching for @AftereAll annotations");
+        System.out.println("Executing @AftereAll annotations");
         Class<? extends TestingClass> AAClass = testingClass.getClass();
         Method[] declaredAAMethods = AAClass.getDeclaredMethods();
         for (Method method : declaredAAMethods) {
