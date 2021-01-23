@@ -1,57 +1,73 @@
 package ca.study.purpose;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.IllegalFormatCodePointException;
+
 public class TestingClass {
+
+    long timeMil = System.currentTimeMillis();
+
     @Test
-    public void test02() {
-        System.out.println("Running: test02");
+    void test02() {
+        System.out.println("test02");
     }
 
     @Test
-    public void test03() {
-        System.out.println("Running: test03");
+    void test03() {
+        if (timeMil % 3 == 0)
+        throw new IllegalArgumentException();
+        else System.out.println("test03");
     }
 
     @Test
-    public void test01() {
-        System.out.println("Running: test01");
+    void test01() {
+        System.out.println("test01");
     }
 
     @BeforeEach
-    public void preTest01() {
-        System.out.println("Running: preTest01");
+    void preTest01() {
+        System.out.println("preTest01");
     }
     @BeforeEach
-    public void preTest03() {
-        System.out.println("Running: preTest03");
+    void preTest03() {
+        if (timeMil % 4 == 0)
+            throw new NullPointerException();
+        else System.out.println("preTest03");
     }
     @BeforeEach
-    public void preTest02() {
-        System.out.println("Running: preTest02");
+    void preTest02() {
+        if (timeMil % 5 == 0)
+            throw new IllegalArgumentException();
+        else System.out.println("preTest02");
     }
 
     @AfterEach
-    public void postTest02() {
-        System.out.println("Running: postTest02");
+    void postTest02() {
+        if (timeMil % 6 == 0)
+            throw new RuntimeException();
+        else System.out.println("postTest02");
     }
 
     @AfterEach
-    public void postTest01() {
-        System.out.println("Running: postTest01");
+    void postTest01() {
+        System.out.println("postTest01");
     }
 
     @AfterAll
-    public void afterAllTest01() {
-        System.out.println("Running: afterAllTest01");
+    static void afterAllTest01() {
+        if (System.currentTimeMillis() % 7 == 0)
+            throw new NullPointerException();
+        else System.out.println("afterAllTest01");
     }
 
     @AfterAll
-    public void afterAllTest02() {
-        System.out.println("Running: afterAllTest02");
+    static void afterAllTest02() {
+        System.out.println("afterAllTest02");
     }
 
     @BeforeAll
-    public void beforeAllTest() {
-        System.out.println("Running: beforeAllTest");
+    static void beforeAllTest() {
+        System.out.println("beforeAllTest");
     }
 
 
