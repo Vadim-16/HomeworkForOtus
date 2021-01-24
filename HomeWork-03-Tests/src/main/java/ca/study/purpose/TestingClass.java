@@ -1,7 +1,5 @@
 package ca.study.purpose;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.IllegalFormatCodePointException;
 
 public class TestingClass {
 
