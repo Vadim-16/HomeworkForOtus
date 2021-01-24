@@ -5,45 +5,45 @@ import java.util.IllegalFormatCodePointException;
 
 public class TestingClass {
 
-    long timeMil = System.currentTimeMillis();
 
     @Test
     void test02() {
-        System.out.println("test02");
+        System.out.print("test02");
     }
 
     @Test
     void test03() {
-        if (timeMil % 3 == 0)
+        if (System.currentTimeMillis() % 3 == 0)
         throw new IllegalArgumentException();
-        else System.out.println("test03");
+        else System.out.print("test03");
     }
 
     @Test
     void test01() {
-        System.out.println("test01");
+        System.out.print("test01");
     }
 
     @BeforeEach
     void preTest01() {
         System.out.println("preTest01");
     }
+
     @BeforeEach
     void preTest03() {
-        if (timeMil % 4 == 0)
+        if (System.currentTimeMillis() % 4 == 0)
             throw new NullPointerException();
         else System.out.println("preTest03");
     }
     @BeforeEach
     void preTest02() {
-        if (timeMil % 5 == 0)
+        if (System.currentTimeMillis() % 5 == 0)
             throw new IllegalArgumentException();
         else System.out.println("preTest02");
     }
 
     @AfterEach
     void postTest02() {
-        if (timeMil % 6 == 0)
+        if (System.currentTimeMillis() % 6 == 0)
             throw new RuntimeException();
         else System.out.println("postTest02");
     }
@@ -67,6 +67,8 @@ public class TestingClass {
 
     @BeforeAll
     static void beforeAllTest() {
+            if (System.currentTimeMillis() % 5 == 0)
+                throw new NullPointerException();
         System.out.println("beforeAllTest");
     }
 
