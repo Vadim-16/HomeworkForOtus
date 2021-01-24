@@ -28,7 +28,7 @@ public class TestingClass {
 
     @BeforeEach
     void preTest03() {
-        if (System.currentTimeMillis() % 4 == 0)
+        if ((int)(Math.random()*100) % 4 == 0)
             throw new NullPointerException();
         else System.out.println("preTest03");
     }
