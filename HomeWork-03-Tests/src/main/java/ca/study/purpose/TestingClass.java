@@ -6,19 +6,23 @@ public class TestingClass {
 
     @Test
     void test02() {
-        System.out.print("test02");
+        if (System.currentTimeMillis() % 4 == 0)
+            throw new IllegalArgumentException();
+        else System.out.print("test02");
     }
 
     @Test
     void test03() {
         if (System.currentTimeMillis() % 3 == 0)
-        throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         else System.out.print("test03");
     }
 
     @Test
     void test01() {
-        System.out.print("test01");
+        if (System.currentTimeMillis() % 2 == 0)
+            throw new NullPointerException();
+        else System.out.print("test01");
     }
 
     @BeforeEach
@@ -28,10 +32,11 @@ public class TestingClass {
 
     @BeforeEach
     void preTest03() {
-        if ((int)(Math.random()*100) % 4 == 0)
+        if ((int) (Math.random() * 100) % 9 == 0)
             throw new NullPointerException();
         else System.out.println("preTest03");
     }
+
     @BeforeEach
     void preTest02() {
         if (System.currentTimeMillis() % 5 == 0)
@@ -41,7 +46,7 @@ public class TestingClass {
 
     @AfterEach
     void postTest02() {
-        if (System.currentTimeMillis() % 6 == 0)
+        if (System.currentTimeMillis() % 8 == 0)
             throw new RuntimeException();
         else System.out.println("postTest02");
     }
@@ -53,7 +58,7 @@ public class TestingClass {
 
     @AfterAll
     static void afterAllTest01() {
-        if (System.currentTimeMillis() % 7 == 0)
+        if (System.currentTimeMillis() % 11 == 0)
             throw new NullPointerException();
         else System.out.println("afterAllTest01");
     }
@@ -65,8 +70,8 @@ public class TestingClass {
 
     @BeforeAll
     static void beforeAllTest() {
-            if (System.currentTimeMillis() % 5 == 0)
-                throw new NullPointerException();
+        if (System.currentTimeMillis() % 5 == 0)
+            throw new NullPointerException();
         System.out.println("beforeAllTest");
     }
 

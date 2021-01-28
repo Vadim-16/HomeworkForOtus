@@ -2,17 +2,18 @@ package ca.study.purpose;
 
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 
 public class TestRunner {
-    private static boolean failed = false;
-    private static boolean beforeAllFailed = false;
-    private static ArrayList<String> completedTests = new ArrayList<>();
-    private static ArrayList<String> failedTests = new ArrayList<>();
+    private boolean failed = false;
+    private boolean beforeAllFailed = false;
+    private ArrayList<String> completedTests = new ArrayList<>();
+    private ArrayList<String> failedTests = new ArrayList<>();
 
-    public static void runTest(Class<? extends TestingClass> testingClass) {
+    public void runTest(Class<?> testingClass) throws InvocationTargetException, IllegalAccessException {
         BeforeOrAfterAllTest(testingClass, BeforeAll.class);
         executeAllTests(testingClass);
         BeforeOrAfterAllTest(testingClass, AfterAll.class);
@@ -21,24 +22,18 @@ public class TestRunner {
         System.out.println(", Failed tests: " + failedTests.size());
     }
 
-    private static void BeforeOrAfterAllTest(Class<? extends TestingClass> testingClass, Class<? extends
-            Annotation> annotationClass) {
+    private void BeforeOrAfterAllTest(Class<?> testingClass, Class<? extends
+            Annotation> annotationClass) throws InvocationTargetException, IllegalAccessException {
 
         Method[] declaredBAMethods = testingClass.getDeclaredMethods();
         for (Method method : declaredBAMethods) {
             if (!method.isAnnotationPresent(annotationClass)) continue;
-            try {
-                method.invoke(testingClass);
-            } catch (Exception e) {
-                System.out.print(method.getName() + " with @" + annotationClass.getSimpleName() + " annotation FAILED");
-                System.out.println();
-                beforeAllFailed = true;
-            }
+            method.invoke(testingClass);
         }
         System.out.println();
     }
 
-    private static void executeAllTests(Class<? extends TestingClass> testingClass) {
+    private void executeAllTests(Class<?> testingClass) throws InvocationTargetException, IllegalAccessException {
         if (beforeAllFailed) {
             System.out.println("Stopped tests execution. Finalizing...\n");
             return;
@@ -53,44 +48,29 @@ public class TestRunner {
 
             executeBEOrAE(testingObject, BeforeEach.class);
 
-            if (!failed) {
-                try {
-                    method.invoke(testingObject);
-                    System.out.println(" - Success");
-                    completedTests.add(method.getName());
-                } catch (Exception e) {
-                    System.out.println(method.getName() + " - FAILED");
-                    failedTests.add(method.getName());
-                }
-            } else {
-                System.out.println(method.getName() + " - not executed due to errors");
+            try {
+                method.invoke(testingObject);
+                System.out.println(" - Success");
+                completedTests.add(method.getName());
+            } catch (Exception e) {
+                System.out.println(method.getName() + " - FAILED");
                 failedTests.add(method.getName());
             }
 
             executeBEOrAE(testingObject, AfterEach.class);
             System.out.println();
-            failed = false;
         }
     }
 
-    private static void executeBEOrAE(TestingClass testingObject, Class<? extends
-            Annotation> annotationClass) {
+    private void executeBEOrAE(TestingClass testingObject, Class<? extends
+            Annotation> annotationClass) throws InvocationTargetException, IllegalAccessException {
 
         Class<? extends TestingClass> testingClazz = testingObject.getClass();
         Method[] declaredMethods = testingClazz.getDeclaredMethods();
 
         for (Method method : declaredMethods) {
             if (!method.isAnnotationPresent(annotationClass)) continue;
-            if (failed) {
-                System.out.println(method.getName() + " - not executed due to errors");
-                continue;
-            }
-            try {
-                method.invoke(testingObject);
-            } catch (Exception e) {
-                System.out.println(method.getName() + " with @" + annotationClass.getSimpleName() + " annotation FAILED");
-                failed = true;
-            }
+            method.invoke(testingObject);
         }
     }
 }
