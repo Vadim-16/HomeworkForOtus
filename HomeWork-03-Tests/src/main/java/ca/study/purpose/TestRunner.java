@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 
 public class TestRunner {
-    private boolean failed = false;
-    private boolean beforeAllFailed = false;
     private ArrayList<String> completedTests = new ArrayList<>();
     private ArrayList<String> failedTests = new ArrayList<>();
 
@@ -34,10 +32,6 @@ public class TestRunner {
     }
 
     private void executeAllTests(Class<?> testingClass) throws InvocationTargetException, IllegalAccessException {
-        if (beforeAllFailed) {
-            System.out.println("Stopped tests execution. Finalizing...\n");
-            return;
-        }
 
         Method[] declaredBEMethods = testingClass.getDeclaredMethods();
 
