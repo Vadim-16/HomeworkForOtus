@@ -39,14 +39,14 @@ public class TestingClass {
 
     @BeforeEach
     void preTest02() {
-        if (System.currentTimeMillis() % 5 == 0)
+        if (System.currentTimeMillis() % 12 == 0)
             throw new IllegalArgumentException();
         else System.out.println("preTest02");
     }
 
     @AfterEach
     void postTest02() {
-        if (System.currentTimeMillis() % 8 == 0)
+        if (System.currentTimeMillis() % 13 == 0)
             throw new RuntimeException();
         else System.out.println("postTest02");
     }
@@ -70,7 +70,7 @@ public class TestingClass {
 
     @BeforeAll
     static void beforeAllTest() {
-        if (System.currentTimeMillis() % 5 == 0)
+        if (System.currentTimeMillis() % 9 == 0)
             throw new NullPointerException();
         System.out.println("beforeAllTest");
     }

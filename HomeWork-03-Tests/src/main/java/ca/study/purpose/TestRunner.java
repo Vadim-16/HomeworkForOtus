@@ -8,19 +8,16 @@ import java.util.ArrayList;
 
 
 public class TestRunner {
-    private ArrayList<String> completedTests = new ArrayList<>();
-    private ArrayList<String> failedTests = new ArrayList<>();
 
-    public void runTest(Class<?> testingClass) throws InvocationTargetException, IllegalAccessException {
-        BeforeOrAfterAllTest(testingClass, BeforeAll.class);
-        executeAllTests(testingClass);
-        BeforeOrAfterAllTest(testingClass, AfterAll.class);
-        System.out.print("Total tests: " + (completedTests.size() + failedTests.size()));
-        System.out.print(", Successful tests: " + completedTests.size());
-        System.out.println(", Failed tests: " + failedTests.size());
+    public static void runTest(Class<?> testingClass) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+
+        beforeOrAfterAllTest(testingClass, BeforeAll.class);
+        String result = executeAllTests(testingClass);
+        beforeOrAfterAllTest(testingClass, AfterAll.class);
+        System.out.println(result);
     }
 
-    private void BeforeOrAfterAllTest(Class<?> testingClass, Class<? extends
+    private static void beforeOrAfterAllTest(Class<?> testingClass, Class<? extends
             Annotation> annotationClass) throws InvocationTargetException, IllegalAccessException {
 
         Method[] declaredBAMethods = testingClass.getDeclaredMethods();
@@ -31,14 +28,17 @@ public class TestRunner {
         System.out.println();
     }
 
-    private void executeAllTests(Class<?> testingClass) throws InvocationTargetException, IllegalAccessException {
+    private static String executeAllTests(Class<?> testingClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        ArrayList<String> completedTests = new ArrayList<>();
+        ArrayList<String> failedTests = new ArrayList<>();
+
 
         Method[] declaredBEMethods = testingClass.getDeclaredMethods();
 
         for (Method method : declaredBEMethods) {
             if (!method.isAnnotationPresent(Test.class)) continue;
 
-            TestingClass testingObject = new TestingClass();   //creating new Object for each Test
+            Object testingObject = testingClass.getDeclaredConstructor().newInstance(); //creating new Object for each Test
 
             executeBEOrAE(testingObject, BeforeEach.class);
 
@@ -54,13 +54,16 @@ public class TestRunner {
             executeBEOrAE(testingObject, AfterEach.class);
             System.out.println();
         }
+        return "Total tests: " + (completedTests.size() + failedTests.size()) +
+        ", Successful tests: " + completedTests.size() +
+        ", Failed tests: " + failedTests.size();
     }
 
-    private void executeBEOrAE(TestingClass testingObject, Class<? extends
+    private static void executeBEOrAE(Object testingObject, Class<? extends
             Annotation> annotationClass) throws InvocationTargetException, IllegalAccessException {
 
-        Class<? extends TestingClass> testingClazz = testingObject.getClass();
-        Method[] declaredMethods = testingClazz.getDeclaredMethods();
+        Class<?> objectClazz = testingObject.getClass();
+        Method[] declaredMethods = objectClazz.getDeclaredMethods();
 
         for (Method method : declaredMethods) {
             if (!method.isAnnotationPresent(annotationClass)) continue;

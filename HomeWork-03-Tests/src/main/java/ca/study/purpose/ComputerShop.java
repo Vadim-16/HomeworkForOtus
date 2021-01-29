@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ComputerShop {
 
-    public static void main(String[] args) throws InvocationTargetException, IllegalAccessException {
-        TestRunner testRunner = new TestRunner();
-        testRunner.runTest(TestingClass.class);
+    public static void main(String[] args) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+
+        TestRunner.runTest(UserTestingClass.class);
 
     }
 }
