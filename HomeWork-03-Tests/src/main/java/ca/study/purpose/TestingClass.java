@@ -1,7 +1,5 @@
-package ca.study.purpose.Testings;
+package ca.study.purpose;
 
-
-import ca.study.purpose.Annotations.*;
 
 public class TestingClass {
 

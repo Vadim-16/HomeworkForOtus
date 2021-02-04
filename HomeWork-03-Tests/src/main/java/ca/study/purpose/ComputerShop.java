@@ -1,8 +1,5 @@
 package ca.study.purpose;
 
-import ca.study.purpose.Testings.TestRunner;
-import ca.study.purpose.Testings.UserTestingClass;
-
 import java.lang.reflect.InvocationTargetException;
 
 public class ComputerShop {
