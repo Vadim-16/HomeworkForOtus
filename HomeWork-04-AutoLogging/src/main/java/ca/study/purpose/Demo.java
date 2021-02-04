@@ -4,7 +4,7 @@ public class Demo {
 
     public static void main(String[] args) {
         Demo demo = new Demo();
-        demo.action();
+        demo.action();          //не работает, нужна инструмениация?
         System.out.println();
 
         Logging myTestLogging = ProxyClass.createMyTestLogging();
