@@ -1,8 +1,8 @@
 package ca.study.purpose;
 
-public class TestLogging implements Logging{
+public class TestLogging implements Logging {
 
-
+    @Log
     public void calculation(int param) {
         System.out.println("TestLogging: " + param);
     }

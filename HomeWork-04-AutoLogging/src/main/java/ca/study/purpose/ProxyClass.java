@@ -3,26 +3,35 @@ package ca.study.purpose;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class ProxyClass {
 
-    static Logging createMyTestLogging() {
-        InvocationHandler invocationHandler = new LogInvocationHandler(new TestLogging());
-        Logging myTestLogging = (Logging) Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(), TestLogging.class.getInterfaces(), invocationHandler);
-        return myTestLogging;
+    static Logging createMyProxy(Class<? extends Logging> classForProxy) {
+        InvocationHandler invocationHandler = new LogInvocationHandler(classForProxy);
+        return (Logging) Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(),
+                classForProxy.getInterfaces(), invocationHandler);
     }
 
-    static class LogInvocationHandler implements InvocationHandler {
-        private final TestLogging myTestLogging;
+    private static class LogInvocationHandler implements InvocationHandler {
+        private final Class<? extends Logging> myProxyHandler;
+        private final HashSet<String> logAnnotationMethods = new HashSet<>();
 
-        LogInvocationHandler(TestLogging myTestLogging) {
-            this.myTestLogging = myTestLogging;
+        LogInvocationHandler(Class<? extends Logging> myProxyHandler) {
+            this.myProxyHandler = myProxyHandler;
+            Method[] declaredMethods = myProxyHandler.getDeclaredMethods();
+            for (int i = 0; i < declaredMethods.length; i++) {
+                if (declaredMethods[i].isAnnotationPresent(Log.class)){
+                    logAnnotationMethods.add(declaredMethods[i].getName().toString() +
+                            Arrays.toString(declaredMethods[i].getParameterTypes()));
+                }
+            }
         }
-
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (method.isAnnotationPresent(Log.class)){
+            if (logAnnotationMethods.contains(method.getName() + Arrays.toString(method.getParameterTypes()))) {
                 System.out.print("Executed method: " + method.getName() + ", params:");
                 for (int i = 0; i < args.length; i++) {
                     System.out.print(" (" + args[i].getClass().getSimpleName() + ") " + args[i]);
@@ -30,7 +39,7 @@ public class ProxyClass {
                 }
                 System.out.println();
             }
-            return method.invoke(myTestLogging, args);
+            return method.invoke(myProxyHandler.getConstructor().newInstance(), args);
         }
     }
 }
