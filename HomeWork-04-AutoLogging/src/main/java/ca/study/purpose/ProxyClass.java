@@ -8,7 +8,7 @@ public class ProxyClass {
 
     static Logging createMyTestLogging() {
         InvocationHandler invocationHandler = new LogInvocationHandler(new TestLogging());
-        Logging myTestLogging = (Logging) Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(), invocationHandler.getClass().getInterfaces(), invocationHandler);
+        Logging myTestLogging = (Logging) Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(), TestLogging.class.getInterfaces(), invocationHandler);
         return myTestLogging;
     }
 
@@ -22,7 +22,14 @@ public class ProxyClass {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            System.out.println(1);
+            if (method.isAnnotationPresent(Log.class)){
+                System.out.print("Executed method: " + method.getName() + ", params:");
+                for (int i = 0; i < args.length; i++) {
+                    System.out.print(" (" + args[i].getClass().getSimpleName() + ") " + args[i]);
+                    if (i != args.length - 1) System.out.print(",");
+                }
+                System.out.println();
+            }
             return method.invoke(myTestLogging, args);
         }
     }
