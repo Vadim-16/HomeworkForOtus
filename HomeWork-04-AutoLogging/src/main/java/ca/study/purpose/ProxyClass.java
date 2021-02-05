@@ -8,10 +8,10 @@ import java.util.HashSet;
 
 public class ProxyClass {
 
-    static Object createMyProxy(Object object) {
-
+    static <T> T createMyProxy(T object) {
+        Class<?>[] interfaces = object.getClass().getInterfaces();
         InvocationHandler invocationHandler = new LogInvocationHandler(object);
-        return Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(),
+        return (T)Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(),
                 object.getClass().getInterfaces(), invocationHandler);
     }
 
