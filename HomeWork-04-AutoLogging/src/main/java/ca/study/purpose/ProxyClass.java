@@ -8,21 +8,22 @@ import java.util.HashSet;
 
 public class ProxyClass {
 
-    static Logging createMyProxy(Class<? extends Logging> classForProxy) {
-        InvocationHandler invocationHandler = new LogInvocationHandler(classForProxy);
-        return (Logging) Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(),
-                classForProxy.getInterfaces(), invocationHandler);
+    static Object createMyProxy(Object object) {
+
+        InvocationHandler invocationHandler = new LogInvocationHandler(object);
+        return Proxy.newProxyInstance(invocationHandler.getClass().getClassLoader(),
+                object.getClass().getInterfaces(), invocationHandler);
     }
 
     private static class LogInvocationHandler implements InvocationHandler {
-        private final Class<? extends Logging> myProxyHandler;
+        private final Object myProxyHandler;
         private final HashSet<String> logAnnotationMethods = new HashSet<>();
 
-        LogInvocationHandler(Class<? extends Logging> myProxyHandler) {
-            this.myProxyHandler = myProxyHandler;
-            Method[] declaredMethods = myProxyHandler.getDeclaredMethods();
+        LogInvocationHandler(Object object) {
+            this.myProxyHandler = object;
+            Method[] declaredMethods = object.getClass().getDeclaredMethods();
             for (int i = 0; i < declaredMethods.length; i++) {
-                if (declaredMethods[i].isAnnotationPresent(Log.class)){
+                if (declaredMethods[i].isAnnotationPresent(Log.class)) {
                     logAnnotationMethods.add(declaredMethods[i].getName().toString() +
                             Arrays.toString(declaredMethods[i].getParameterTypes()));
                 }
@@ -39,7 +40,7 @@ public class ProxyClass {
                 }
                 System.out.println();
             }
-            return method.invoke(myProxyHandler.getConstructor().newInstance(), args);
+            return method.invoke(myProxyHandler, args);
         }
     }
 }
