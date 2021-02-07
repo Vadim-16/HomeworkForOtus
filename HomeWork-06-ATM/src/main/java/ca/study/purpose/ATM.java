@@ -4,20 +4,21 @@ import ca.study.purpose.RubDenominals.*;
 
 
 public class ATM {
-    public static void main(String[] args) {
-        Rubles rubles = new Rubles(100);
-        rubles.balance();
+    private Rubles rubles;
 
-        rubles.deposit(new Rub500(50));
-        rubles.balance();
+    public ATM(int ATMStartNumberOfBills){
+        rubles = new Rubles(ATMStartNumberOfBills);
+    }
 
-        rubles.withdraw(706_280);
-        rubles.balance();
+    void deposit(Bills bills) {
+        rubles.deposit(bills);
+    }
 
-        rubles.withdraw(200_370);
-        rubles.balance();
+    void withdraw(int Amount) {
+        rubles.withdraw(Amount);
+    }
 
-        rubles.withdraw(4_910);
+    void balance(){
         rubles.balance();
     }
 }
