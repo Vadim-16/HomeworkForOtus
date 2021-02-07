@@ -15,6 +15,7 @@
         <module>HomeWork-03-Tests</module>
         <module>HomeWork-04-AutoLogging</module>
         <module>HomeWork-05-GC</module>
+        <module>HomeWork-06-ATM</module>
     </modules>
 
     <properties>
