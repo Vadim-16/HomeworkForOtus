@@ -1,12 +1,14 @@
 package ca.study.purpose.RubDenominals;
 
-public interface Bills {
+abstract public class Bills {
 
-    int getValue();
+    abstract public void deposit(int billCount);
 
-    void deposit(int billCount);
+    abstract public void withdraw(int billCount);
 
-    void withdraw(int billCount);
+    abstract public int getValue();
 
-    int getCount();
+    abstract public int getCount();
+
+    abstract public int getAmount();
 }

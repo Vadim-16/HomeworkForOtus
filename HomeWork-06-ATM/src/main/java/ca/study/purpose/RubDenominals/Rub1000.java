@@ -1,8 +1,7 @@
 package ca.study.purpose.RubDenominals;
 
-import ca.study.purpose.Rubles;
 
-public class Rub1000 extends Rubles implements Bills {
+public class Rub1000 extends Bills {
     public static final int value = 1000;
     private int count;
 
@@ -28,6 +27,11 @@ public class Rub1000 extends Rubles implements Bills {
     @Override
     public int getCount() {
         return count;
+    }
+
+    @Override
+    public int getAmount() {
+        return value * count;
     }
 
 }
