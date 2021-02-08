@@ -1,11 +1,11 @@
-package ca.study.purpose.RubDenominals;
+package ca.study.purpose.RubCells;
 
 
-public class Rub1000 extends Bills {
-    public static final int value = 1000;
+public class Rub500 implements ATMCell {
+    public static final int value = 500;
     private int count;
 
-    public Rub1000(int count) {
+    public Rub500(int count) {
         this.count = count;
     }
 
