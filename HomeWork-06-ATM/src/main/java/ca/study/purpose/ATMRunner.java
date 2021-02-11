@@ -7,20 +7,20 @@ import ca.study.purpose.RubCells.Rub500;
 
 public class ATMRunner {
     public static void main(String[] args) {
-        ATM atm = new ATM(20);
-        atm.balance();
+        ATMFirstModel atmFirstModel = new ATMFirstModel(20);
+        atmFirstModel.balance();
 
-        atm.deposit(new Rub500(20));
-        atm.balance();
+        atmFirstModel.deposit(new Rub500(20));
+        atmFirstModel.balance();
 
-        atm.withdraw(74_780, new TwoThousands());
-        atm.balance();
+        atmFirstModel.withdraw(74_780, new TwoThousands());
+        atmFirstModel.balance();
 
-        atm.withdraw(33_740, new BigBills());
-        atm.balance();
+        atmFirstModel.withdraw(33_740, new BigBills());
+        atmFirstModel.balance();
 
-        atm.withdraw(15_260, new Thousands());
-        atm.balance();
+        atmFirstModel.withdraw(15_260, new Thousands());
+        atmFirstModel.balance();
 
     }
 }

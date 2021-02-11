@@ -1,6 +1,5 @@
 package ca.study.purpose.BillsCalculations;
 
-import ca.study.purpose.BillsCalculations.CalculateBillsOperation;
 import ca.study.purpose.RubCells.ATMCell;
 
 import java.util.ArrayList;

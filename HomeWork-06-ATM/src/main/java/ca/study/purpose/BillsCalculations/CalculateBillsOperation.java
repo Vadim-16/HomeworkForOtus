@@ -2,7 +2,6 @@ package ca.study.purpose.BillsCalculations;
 
 import ca.study.purpose.RubCells.ATMCell;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface CalculateBillsOperation {
