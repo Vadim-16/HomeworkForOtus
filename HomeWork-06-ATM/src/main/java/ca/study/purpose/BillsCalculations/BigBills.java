@@ -4,13 +4,14 @@ import ca.study.purpose.BillsCalculations.CalculateBillsOperation;
 import ca.study.purpose.RubCells.ATMCell;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BigBills implements CalculateBillsOperation {
 
     @Override
-    public ArrayList<Integer> calculateBills(int amount, ArrayList<ATMCell> bills) {
+    public List<Integer> calculateBills(int amount, List<ATMCell> bills) {
         int restAmount = amount;
-        ArrayList<Integer> billCount = new ArrayList<>();
+        List<Integer> billCount = new ArrayList<>();
 
         for (ATMCell bill : bills) {
             int valueOfBill = bill.getValue();

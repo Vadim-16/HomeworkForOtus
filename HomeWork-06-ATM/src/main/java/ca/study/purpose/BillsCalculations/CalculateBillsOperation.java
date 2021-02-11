@@ -3,7 +3,8 @@ package ca.study.purpose.BillsCalculations;
 import ca.study.purpose.RubCells.ATMCell;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface CalculateBillsOperation {
-    ArrayList<Integer> calculateBills(int Amount, ArrayList<ATMCell> bills);
+    List<Integer> calculateBills(int Amount, List<ATMCell> bills);
 }

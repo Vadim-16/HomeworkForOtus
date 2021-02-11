@@ -3,13 +3,14 @@ package ca.study.purpose.BillsCalculations;
 import ca.study.purpose.RubCells.ATMCell;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TwoThousands implements CalculateBillsOperation {
     @Override
-    public ArrayList<Integer> calculateBills(int amount, ArrayList<ATMCell> bills) {
+    public List<Integer> calculateBills(int amount, List<ATMCell> bills) {
         int restAmount = amount;
-        ArrayList<Integer> billCount = new ArrayList<>();
-        ArrayList<ATMCell> calculatedBills = new ArrayList<>(bills);
+        List<Integer> billCount = new ArrayList<>();
+        List<ATMCell> calculatedBills = new ArrayList<>(bills);
 
         ATMCell rub2000 = calculatedBills.get(1);
         calculatedBills.remove(1);
