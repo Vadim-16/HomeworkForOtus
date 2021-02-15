@@ -7,7 +7,8 @@ public class Memento {
     private String lastUndoSavepoint;
 
     public Memento(HashMap<Bills, Integer> money, String lastUndoSavepoint) {
-        this.money = money;
+        this.money = (HashMap<Bills, Integer>) money.clone();
+        this.lastUndoSavepoint = lastUndoSavepoint;
     }
 
     public HashMap<Bills, Integer> getMoney() {

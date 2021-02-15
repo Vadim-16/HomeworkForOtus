@@ -1,6 +1,7 @@
 package ca.study.purpose;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface ATMOps {
     void deposit(Bills bill, int amount);
@@ -12,4 +13,7 @@ public interface ATMOps {
     void undoAll();
 
     HashMap<Bills, Integer> collect();
+
+    void setNextChain(ATMOps nextChain);
+    void dispense(Bills bill, int numberOfBills, List<ATMOps> atms);
 }

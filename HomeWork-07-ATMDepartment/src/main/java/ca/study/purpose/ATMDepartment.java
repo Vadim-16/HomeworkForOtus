@@ -1,9 +1,6 @@
 package ca.study.purpose;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ATMDepartment {
     private List<ATMOps> atms = new ArrayList<>();
@@ -12,7 +9,20 @@ public class ATMDepartment {
         ATMDepartment atmDepartment = new ATMDepartment(new ATMSecondVersion(10),
                 new ATMSecondVersion(20),
                 new ATMSecondVersion(15));
+        System.out.println(atmDepartment.balance());
 
+        ATMDispenseChain atmDispenser = new ATMDispenseChain(atmDepartment.atms);
+        atmDispenser.dispense(Bills.ONEHUNDRED, 40);
+        System.out.println(atmDepartment.balance());
+
+        atmDispenser.dispense(Bills.ONETHOUSAND, 46);
+        System.out.println(atmDepartment.balance());
+
+        atmDepartment.collectAll();
+        System.out.println(atmDepartment.balance());
+
+        atmDepartment.restoreAll();
+        System.out.println(atmDepartment.balance());
 
     }
 
@@ -32,6 +42,14 @@ public class ATMDepartment {
         atms.remove(atm);
     }
 
+    public double balance() {
+        double balance = 0;
+        for (ATMOps atm : atms) {
+            balance += atm.balance();
+        }
+        return balance;
+    }
+
     public HashMap<Bills, Integer> collect(ATMOps atm) {
         MoneyCollector moneyCollector = new MoneyCollector();
         moneyCollector.takeCommand(new CollectMoney(atm));
@@ -39,8 +57,6 @@ public class ATMDepartment {
     }
 
     public HashMap<Bills, Integer> collectAll() {
-        HashMap<Bills, Integer> totalRemainder = new HashMap<>();
-
         MoneyCollector moneyCollector = new MoneyCollector();
         for (ATMOps atm : atms) {
             moneyCollector.takeCommand(new CollectMoney(atm));

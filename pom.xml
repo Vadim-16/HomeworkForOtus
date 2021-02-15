@@ -35,14 +35,14 @@
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>5.7.1</version>
+                <artifactId>junit-jupiter</artifactId>
+                <version>RELEASE</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.7.1</version>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>RELEASE</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
