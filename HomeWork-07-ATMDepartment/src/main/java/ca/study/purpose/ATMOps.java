@@ -1,19 +1,22 @@
 package ca.study.purpose;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public interface ATMOps {
+public interface ATMOps {  //тут полная солянка. Пришлось вынести абстрактные методы разных паттернов в один интерфейс, чтобы везде все виделось.
     void deposit(Bills bill, int amount);
     boolean withdraw(Bills bill, int numberOfBills);
     double balance();
 
+    //Memento
     void createSavepoint(String savepointName);
     void undo();
     void undoAll();
 
-    HashMap<Bills, Integer> collect();
+    //Command
+    Map<Bills, Integer> collect();
 
+    //Chain of responsibility
     void setNextChain(ATMOps nextChain);
     void dispense(Bills bill, int numberOfBills, List<ATMOps> atms);
 }

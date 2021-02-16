@@ -1,4 +1,7 @@
-package ca.study.purpose;
+package ca.study.purpose.Command_Pattern;
+
+import ca.study.purpose.Bills;
+import ca.study.purpose.Command_Pattern.Command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +15,11 @@ public class MoneyCollector {
         collectorList.add(command);
     }
 
-    public HashMap<Bills, Integer> CollectAll() {
-        HashMap<Bills, Integer> totalMoney = new HashMap<>();
+    public Map<Bills, Integer> CollectAll() {
+        Map<Bills, Integer> totalMoney = new HashMap<>();
 
         for (Command command : collectorList) {
-            HashMap<Bills, Integer> remainder = command.execute();
+            Map<Bills, Integer> remainder = command.execute();
             for (Map.Entry<Bills, Integer> entry : remainder.entrySet()) {
                 totalMoney.compute(entry.getKey(), (k, v) -> v == null ? remainder.get(k) : v + remainder.get(k));
             }

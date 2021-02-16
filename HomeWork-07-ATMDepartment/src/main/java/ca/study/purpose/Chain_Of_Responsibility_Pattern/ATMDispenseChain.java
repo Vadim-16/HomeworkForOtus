@@ -1,4 +1,7 @@
-package ca.study.purpose;
+package ca.study.purpose.Chain_Of_Responsibility_Pattern;
+
+import ca.study.purpose.ATMOps;
+import ca.study.purpose.Bills;
 
 import java.util.List;
 

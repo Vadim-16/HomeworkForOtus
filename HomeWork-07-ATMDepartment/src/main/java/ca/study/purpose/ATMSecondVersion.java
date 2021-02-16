@@ -1,22 +1,25 @@
 package ca.study.purpose;
 
+import ca.study.purpose.Memento_Pattern.Caretaker;
+import ca.study.purpose.Memento_Pattern.Memento;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ATMSecondVersion implements ATMOps {
-    private HashMap<Bills, Integer> money = new HashMap<>();
-    private String lastUndoSavepoint = "pre-starting";
-    private ATMOps chain;
-    Caretaker careTaker = new Caretaker();
+    private Map<Bills, Integer> money = new HashMap<>();
+    private String lastUndoSavepoint = "pre-starting";  //need for Memento only
+    private ATMOps chain;                               //need for Chain Of Responsibility only
+    private Caretaker careTaker = new Caretaker();      //need for Memento only
 
     public ATMSecondVersion(int numberOfBills) {
-        money.put(Bills.FIVETHOUSAND, numberOfBills);
-        money.put(Bills.TWOTHOUSAND, numberOfBills);
-        money.put(Bills.ONETHOUSAND, numberOfBills);
-        money.put(Bills.FIVEHUNDRED, numberOfBills);
-        money.put(Bills.TWOHUNDRED, numberOfBills);
-        money.put(Bills.ONEHUNDRED, numberOfBills);
+        money.put(Bills.FIVE_THOUSAND, numberOfBills);
+        money.put(Bills.TWO_THOUSAND, numberOfBills);
+        money.put(Bills.ONE_THOUSAND, numberOfBills);
+        money.put(Bills.FIVE_HUNDRED, numberOfBills);
+        money.put(Bills.TWO_HUNDRED, numberOfBills);
+        money.put(Bills.ONE_HUNDRED, numberOfBills);
         money.put(Bills.FIFTY, numberOfBills);
         money.put(Bills.TEN, numberOfBills);
         createSavepoint("INITIAL");
@@ -50,30 +53,30 @@ public class ATMSecondVersion implements ATMOps {
     }
 
     @Override
-    public void createSavepoint(String savepointName) {
+    public void createSavepoint(String savepointName) {    //need for Memento
         careTaker.saveMemento(new Memento(this.money, this.lastUndoSavepoint), savepointName);
         lastUndoSavepoint = savepointName;
     }
 
     @Override
-    public void undo() {
+    public void undo() {                      //Memento pattern
         setOriginatorState(lastUndoSavepoint);
     }
 
     @Override
-    public void undoAll() {
+    public void undoAll() {            //Memento pattern
         setOriginatorState("INITIAL");
         careTaker.clearSavePoints();
     }
 
-    private void setOriginatorState(String savepointName) {
+    private void setOriginatorState(String savepointName) {    //Memento pattern
         Memento mem = careTaker.getMemento(savepointName);
         this.money = mem.getMoney();
         this.lastUndoSavepoint = mem.getLastUndoSavepoint();
     }
 
-    public HashMap<Bills, Integer> collect() {
-        HashMap<Bills, Integer> remainder = (HashMap<Bills, Integer>) money.clone();
+    public Map<Bills, Integer> collect() {                    //Command pattern
+        Map<Bills, Integer> remainder = new HashMap<>(money);
         money.replaceAll((k, v) -> v = 0);
         createSavepoint("Collected");
         return remainder;
@@ -82,10 +85,10 @@ public class ATMSecondVersion implements ATMOps {
     @Override
     public void setNextChain(ATMOps nextChain) {
         this.chain = nextChain;
-    }
+    }  //Chain of responsibility pattern
 
     @Override
-    public void dispense(Bills bill, int numberOfBills, List<ATMOps> atms) {
+    public void dispense(Bills bill, int numberOfBills, List<ATMOps> atms) {  //Chain of responsibility pattern
         int currentNumberOfBills = money.get(bill);
         if (currentNumberOfBills >= numberOfBills) {
             money.put(bill, currentNumberOfBills - numberOfBills);
@@ -103,5 +106,4 @@ public class ATMSecondVersion implements ATMOps {
             }
         }
     }
-
 }

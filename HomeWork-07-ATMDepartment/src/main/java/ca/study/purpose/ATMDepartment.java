@@ -1,8 +1,12 @@
 package ca.study.purpose;
 
+import ca.study.purpose.Chain_Of_Responsibility_Pattern.ATMDispenseChain;
+import ca.study.purpose.Command_Pattern.CollectMoney;
+import ca.study.purpose.Command_Pattern.MoneyCollector;
+
 import java.util.*;
 
-public class ATMDepartment {
+public class ATMDepartment implements ATMDepartmentOps{
     private List<ATMOps> atms = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -11,17 +15,20 @@ public class ATMDepartment {
                 new ATMSecondVersion(15));
         System.out.println(atmDepartment.balance());
 
-        ATMDispenseChain atmDispenser = new ATMDispenseChain(atmDepartment.atms);
-        atmDispenser.dispense(Bills.ONEHUNDRED, 40);
+        atmDepartment.addATM(new ATMSecondVersion(5));
         System.out.println(atmDepartment.balance());
 
-        atmDispenser.dispense(Bills.ONETHOUSAND, 46);
+        ATMDispenseChain atmDispenser = new ATMDispenseChain(atmDepartment.atms);  //снимаю купюры по цепочки ответственности
+        atmDispenser.dispense(Bills.ONE_HUNDRED, 49);
         System.out.println(atmDepartment.balance());
 
-        atmDepartment.collectAll();
+        atmDispenser.dispense(Bills.ONE_THOUSAND, 51);  //проверяю поведение в случае нехватки купюр во всем департаменте
+        System.out.println(atmDepartment.balance());               // и откатываю при помощи Memento
+
+        atmDepartment.collectAll();                   //снимаю все остатки в АТМах
         System.out.println(atmDepartment.balance());
 
-        atmDepartment.restoreAll();
+        atmDepartment.restoreAll();                   //востанавливаю первоначальное (индивидуальное) состояние во всех АТМах
         System.out.println(atmDepartment.balance());
 
     }
@@ -50,13 +57,13 @@ public class ATMDepartment {
         return balance;
     }
 
-    public HashMap<Bills, Integer> collect(ATMOps atm) {
+    public Map<Bills, Integer> collect(ATMOps atm) {          //снимает остаток в АТМе
         MoneyCollector moneyCollector = new MoneyCollector();
         moneyCollector.takeCommand(new CollectMoney(atm));
         return moneyCollector.CollectAll();
     }
 
-    public HashMap<Bills, Integer> collectAll() {
+    public Map<Bills, Integer> collectAll() {                 //снимает все остатки в АТМах
         MoneyCollector moneyCollector = new MoneyCollector();
         for (ATMOps atm : atms) {
             moneyCollector.takeCommand(new CollectMoney(atm));
@@ -64,7 +71,7 @@ public class ATMDepartment {
         return moneyCollector.CollectAll();
     }
 
-    public void restoreAll() {
+    public void restoreAll() {      //востанавливает первоначальное (индивидуальное) состояние во всех АТМах
         for (ATMOps atm : atms) {
             atm.undoAll();
         }

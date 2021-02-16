@@ -1,4 +1,4 @@
-package ca.study.purpose;
+package ca.study.purpose.Memento_Pattern;
 
 import java.util.HashMap;
 import java.util.Map;
