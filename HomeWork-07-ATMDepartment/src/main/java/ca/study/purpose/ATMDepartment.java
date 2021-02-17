@@ -57,9 +57,9 @@ public class ATMDepartment implements ATMDepartmentOps{
         return balance;
     }
 
-    public Map<Bills, Integer> collect(ATMOps atm) {          //снимает остаток в АТМе
+    public Map<Bills, Integer> collect(int atmNumber) {          //снимает остаток в АТМе
         MoneyCollector moneyCollector = new MoneyCollector();
-        moneyCollector.takeCommand(new CollectMoney(atm));
+        moneyCollector.takeCommand(new CollectMoney(atms.get(atmNumber)));
         return moneyCollector.CollectAll();
     }
 

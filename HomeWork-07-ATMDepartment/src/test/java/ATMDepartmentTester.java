@@ -31,7 +31,7 @@ public class ATMDepartmentTester {
 
     @Test
     public void testCollect(){
-        Map<Bills, Integer> collect = atmDepartment.collect(atmDepartment.getATMList().get(0));
+        Map<Bills, Integer> collect = atmDepartment.collect(0);
         assertEquals(8_860 * 35 , atmDepartment.balance());
     }
 
