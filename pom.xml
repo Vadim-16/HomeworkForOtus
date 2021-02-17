@@ -17,6 +17,7 @@
         <module>HomeWork-05-GC</module>
         <module>HomeWork-06-ATM</module>
         <module>HomeWork-07-ATMDepartment</module>
+        <module>HomeWork-08-jsonObjectWriter</module>
     </modules>
 
     <properties>
