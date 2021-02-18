@@ -29,13 +29,26 @@ public class Test {
         intTest();
 
         charTest();
+
+        mapWithCarTest();
     }
 
     private static void mapTest() throws NoSuchFieldException, IllegalAccessException {
         Map<String, int[]> cars = new HashMap<>();
         int[] ints = {1, 2, 3};
         cars.put("1", ints);
-//        cars.put("2", new Car());
+        System.out.println(MyJSON.toMyJson(cars));
+
+
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(cars));
+        System.out.println();
+    }
+
+    private static void mapWithCarTest() throws NoSuchFieldException, IllegalAccessException {
+        Map<String, Car> cars = new HashMap<>();
+        cars.put("1", new Car());
+        cars.put("2", new Car());
         System.out.println(MyJSON.toMyJson(cars));
 
 
@@ -60,7 +73,6 @@ public class Test {
         List<String> carList = new ArrayList<>();
         carList.add("1");
         carList.add(null);
-//        carList.add(new Car());
         System.out.println(MyJSON.toMyJson(carList));
 
 
@@ -83,7 +95,7 @@ public class Test {
     private static void hashSetTest() throws NoSuchFieldException, IllegalAccessException {
         Set<Car> carList = new HashSet<>();
         carList.add(new Car());
-//        carList.add(new Car());
+        carList.add(new Car());
         System.out.println(MyJSON.toMyJson(carList));
 
 
