@@ -42,6 +42,10 @@ public class MyJSON {
                     stringBuilder.append("\"").append(field.get(obj)).append("\"");
                     break;
                 }
+                case "Object":{
+                    stringBuilder.append(toMyJson(field.get(obj)));
+                    break;
+                }
                 case "boolean[]":
                 case "byte[]":
                 case "char[]":
@@ -129,6 +133,7 @@ public class MyJSON {
     }
 
     static class SomeClass {
+        private Object object = new Object();
         protected String word = "oneWord";
         public double doubleNumber = 55.093d;
         private int[] numbers = new int[]{1, 2, 3, 4, 5};
@@ -149,6 +154,7 @@ public class MyJSON {
             if (o == null || getClass() != o.getClass()) return false;
             SomeClass someClass = (SomeClass) o;
             return Double.compare(someClass.doubleNumber, doubleNumber) == 0 &&
+                    Objects.equals(object, someClass.object) &&
                     Objects.equals(word, someClass.word) &&
                     Arrays.equals(numbers, someClass.numbers) &&
                     Arrays.equals(objects, someClass.objects) &&
@@ -159,7 +165,7 @@ public class MyJSON {
 
         @Override
         public int hashCode() {
-            int result = Objects.hash(word, doubleNumber, integerList, set, map);
+            int result = Objects.hash(object, word, doubleNumber, integerList, set, map);
             result = 31 * result + Arrays.hashCode(numbers);
             result = 31 * result + Arrays.hashCode(objects);
             return result;
