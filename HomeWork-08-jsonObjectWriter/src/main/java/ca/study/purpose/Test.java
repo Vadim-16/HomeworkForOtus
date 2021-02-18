@@ -1,14 +1,12 @@
 package ca.study.purpose;
 
 import ca.study.purpose.testObjects.Car;
-import ca.study.purpose.testObjects.Ford;
 import com.google.gson.Gson;
 
 import java.util.*;
 
 public class Test {
     public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException {
-
 
         myObjectTest();
 
@@ -83,7 +81,7 @@ public class Test {
 
     private static void myObjectTest() throws NoSuchFieldException, IllegalAccessException {
 
-        Ford ford = new Ford();
+        Car ford = new Car();
         System.out.println(MyJSON.toMyJson(ford));
 
 
