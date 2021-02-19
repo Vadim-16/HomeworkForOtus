@@ -22,12 +22,12 @@ public class MyJSON {
         System.out.println(fromMySecondJson);
 
         System.out.println("fromGSON = fromMySecondJson ? " + fromGSON.equals(fromMySecondJson));
-
-        SomeClass class2 = gson.fromJson(fromGSON, SomeClass.class);
-        System.out.println("class1 = class2 ? " + class1.equals(class2));
-
-        System.out.println(class1);
-        System.out.println(class2);
+//
+//        SomeClass class2 = gson.fromJson(fromGSON, SomeClass.class);
+//        System.out.println("class1 = class2 ? " + class1.equals(class2));
+//
+//        System.out.println(class1);
+//        System.out.println(class2);
     }
 
     public static String toMySecondJson(Object obj) throws IllegalAccessException {
@@ -168,5 +168,27 @@ public class MyJSON {
             map.put("twoHundred", new Rule());
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SomeClass someClass = (SomeClass) o;
+            return Double.compare(someClass.doubleNumber, doubleNumber) == 0 &&
+                    Objects.equals(abc, someClass.abc) &&
+                    Objects.equals(word, someClass.word) &&
+                    Arrays.equals(numbers, someClass.numbers) &&
+                    Arrays.equals(objects, someClass.objects) &&
+                    Objects.equals(integerList, someClass.integerList) &&
+                    Objects.equals(set, someClass.set) &&
+                    Objects.equals(map, someClass.map);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(abc, word, doubleNumber, integerList, set, map);
+            result = 31 * result + Arrays.hashCode(numbers);
+            result = 31 * result + Arrays.hashCode(objects);
+            return result;
+        }
     }
 }
