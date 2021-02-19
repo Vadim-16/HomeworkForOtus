@@ -1,7 +1,9 @@
 package ca.study.purpose;
 
+import ca.study.purpose.testObjects.Rule;
 import com.google.gson.Gson;
 
+import javax.json.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -16,10 +18,10 @@ public class MyJSON {
         String fromGSON = gson.toJson(class1);
         System.out.println(fromGSON);
 
-        String fromMyJson = toMyJson(class1);
-        System.out.println(fromMyJson);
+        String fromMySecondJson = toMySecondJson(class1);
+        System.out.println(fromMySecondJson);
 
-        System.out.println("fromGSON = fromMyJson ? " + fromGSON.equals(fromMyJson));
+        System.out.println("fromGSON = fromMySecondJson ? " + fromGSON.equals(fromMySecondJson));
 
         SomeClass class2 = gson.fromJson(fromGSON, SomeClass.class);
         System.out.println("class1 = class2 ? " + class1.equals(class2));
@@ -27,6 +29,23 @@ public class MyJSON {
         System.out.println(class1);
         System.out.println(class2);
     }
+
+    public static String toMySecondJson(Object obj) throws IllegalAccessException {
+        JsonObjectBuilder objBuilder = Json.createObjectBuilder();
+        Class<?> aClazz = obj.getClass();
+        Field[] declaredFields = aClazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            field.setAccessible(true);
+            Object fieldObject = field.get(obj);
+
+            field.setAccessible(false);
+        }
+        JsonObject build = objBuilder.build();
+        System.out.println(build);
+        return "";
+    }
+
+
 
     public static String toMyJson(Object obj) throws IllegalAccessException, NoSuchFieldException {
         Class<?> aClazz = obj.getClass();
@@ -37,12 +56,13 @@ public class MyJSON {
             field.setAccessible(true);
             stringBuilder.append("\"").append(field.getName()).append("\"").append(":");
             String s = field.getType().getSimpleName();
+            System.out.println(s);
             switch (s) {
                 case "String": {
                     stringBuilder.append("\"").append(field.get(obj)).append("\"");
                     break;
                 }
-                case "Object":{
+                case "Object": {
                     stringBuilder.append(toMyJson(field.get(obj)));
                     break;
                 }
@@ -133,42 +153,20 @@ public class MyJSON {
     }
 
     static class SomeClass {
-        private Object object = new Object();
+        private ClassABC abc = new ClassABC();
         protected String word = "oneWord";
         public double doubleNumber = 55.093d;
-        private int[] numbers = new int[]{1, 2, 3, 4, 5};
+        private int[][] numbers = {{1, 2, 3, 4, 5}, {1}, {3, 4}};
         public Object[] objects = new Object[]{new Object(), "", 54, new ClassABC()};
         ArrayList<Integer> integerList = new ArrayList<>(Arrays.asList(9, 8, 7, 6, 5));
         private Set<String> set = new HashSet<>(Arrays.asList("ten", "eleven", "twelve"));
-        private Map<String, Integer> map = new HashMap();
+        private Map<String, Rule> map = new HashMap();
 
 
         public SomeClass() {
-            map.put("hundred", 100);
-            map.put("twoHundred", 200);
+            map.put("oneHundred", null);
+            map.put("twoHundred", new Rule());
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            SomeClass someClass = (SomeClass) o;
-            return Double.compare(someClass.doubleNumber, doubleNumber) == 0 &&
-                    Objects.equals(object, someClass.object) &&
-                    Objects.equals(word, someClass.word) &&
-                    Arrays.equals(numbers, someClass.numbers) &&
-                    Arrays.equals(objects, someClass.objects) &&
-                    Objects.equals(integerList, someClass.integerList) &&
-                    Objects.equals(set, someClass.set) &&
-                    Objects.equals(map, someClass.map);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hash(object, word, doubleNumber, integerList, set, map);
-            result = 31 * result + Arrays.hashCode(numbers);
-            result = 31 * result + Arrays.hashCode(objects);
-            return result;
-        }
     }
 }

@@ -35,7 +35,7 @@ public class Test {
         Map<String, int[]> cars = new HashMap<>();
         int[] ints = {1, 2, 3};
         cars.put("1", ints);
-        System.out.println(MyJSON.toMyJson(cars));
+        System.out.println(MySecondJSON.toMySecondJson(cars));
 
 
         Gson gson = new Gson();
@@ -47,7 +47,7 @@ public class Test {
         Map<String, Car> cars = new HashMap<>();
         cars.put("1", new Car());
         cars.put("2", new Car());
-        System.out.println(MyJSON.toMyJson(cars));
+        System.out.println(MySecondJSON.toMySecondJson(cars));
 
 
         Gson gson = new Gson();
@@ -59,7 +59,7 @@ public class Test {
         List<Car> carList = new LinkedList<>();
         carList.add(new Car());
         carList.add(new Car());
-        System.out.println(MyJSON.toMyJson(carList));
+        System.out.println(MySecondJSON.toMySecondJson(carList));
 
 
         Gson gson = new Gson();
@@ -71,7 +71,7 @@ public class Test {
         List<String> carList = new ArrayList<>();
         carList.add("1");
         carList.add(null);
-        System.out.println(MyJSON.toMyJson(carList));
+        System.out.println(MySecondJSON.toMySecondJson(carList));
 
 
         Gson gson = new Gson();
@@ -82,7 +82,7 @@ public class Test {
     private static void myObjectTest() throws NoSuchFieldException, IllegalAccessException {
 
         Car ford = new Car();
-        System.out.println(MyJSON.toMyJson(ford));
+        System.out.println(MySecondJSON.toMySecondJson(ford));
 
 
         Gson gson = new Gson();
@@ -94,7 +94,7 @@ public class Test {
         Set<Car> carList = new HashSet<>();
         carList.add(new Car());
         carList.add(new Car());
-        System.out.println(MyJSON.toMyJson(carList));
+        System.out.println(MySecondJSON.toMySecondJson(carList));
 
 
         Gson gson = new Gson();
@@ -104,7 +104,7 @@ public class Test {
 
     private static void stringTest() throws NoSuchFieldException, IllegalAccessException {
 
-        System.out.println(MyJSON.toMyJson("Привет"));
+        System.out.println(MySecondJSON.toMySecondJson("Привет"));
 
 
         Gson gson = new Gson();
@@ -114,7 +114,7 @@ public class Test {
 
     private static void arrayPrimitiveTest() throws NoSuchFieldException, IllegalAccessException {
         int[][] ints = {{1, 2, 3}, {4, 5, 6}};
-        System.out.println(MyJSON.toMyJson(ints));
+        System.out.println(MySecondJSON.toMySecondJson(ints));
 
 
         Gson gson = new Gson();
@@ -124,7 +124,7 @@ public class Test {
 
     private static void arrayObjTest() throws NoSuchFieldException, IllegalAccessException {
         Car[][] cars = {{null}, {new Car()}};
-        System.out.println(MyJSON.toMyJson(cars));
+        System.out.println(MySecondJSON.toMySecondJson(cars));
 
 
         Gson gson = new Gson();
@@ -134,7 +134,7 @@ public class Test {
 
     private static void intTest() throws NoSuchFieldException, IllegalAccessException {
 
-        System.out.println(MyJSON.toMyJson(1));
+        System.out.println(MySecondJSON.toMySecondJson(1));
 
 
         Gson gson = new Gson();
@@ -144,7 +144,7 @@ public class Test {
 
     private static void charTest() throws NoSuchFieldException, IllegalAccessException {
 
-        System.out.println(MyJSON.toMyJson('Z'));
+        System.out.println(MySecondJSON.toMySecondJson('Z'));
 
 
         Gson gson = new Gson();
