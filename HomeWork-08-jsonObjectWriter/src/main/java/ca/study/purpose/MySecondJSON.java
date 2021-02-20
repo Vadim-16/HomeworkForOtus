@@ -1,9 +1,8 @@
 package ca.study.purpose;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonNull;
 import com.google.gson.internal.Primitives;
-import org.glassfish.json.JsonUtil;
+
 
 import javax.json.*;
 import java.lang.reflect.Array;
@@ -66,7 +65,8 @@ public class MySecondJSON {
         Class<?> aClazz = obj.getClass();
         Field[] fields = aClazz.getDeclaredFields();
         for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers())) {
+            int modifiers = field.getModifiers();
+            if (Modifier.isStatic(modifiers) || modifiers == 16 || modifiers == 24 || modifiers == 128 || modifiers == 0) {
                 continue;
             }
             field.setAccessible(true);

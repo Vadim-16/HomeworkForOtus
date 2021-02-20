@@ -15,11 +15,11 @@ public class Car {
     private final Salon salon = null;
     private final ArrayList<Map<String, Rule>> rules3 = new ArrayList<>();
 
-//    {
-//        Map<String, Rule> maps = new HashMap<>();
-//        maps.put("1", null);
-//        rules3.add(maps);
-//    }
+    {
+        Map<String, Rule> maps = new HashMap<>();
+        maps.put("1", null);
+        rules3.add(maps);
+    }
 
     @Override
     public String toString() {
