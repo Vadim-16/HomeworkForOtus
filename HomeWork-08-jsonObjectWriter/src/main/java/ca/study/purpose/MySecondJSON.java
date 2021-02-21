@@ -48,20 +48,12 @@ public class MySecondJSON {
             result = obj.toString();
         } else if (obj.getClass().isArray() || obj instanceof Collection) {
             result = navigateArray(obj).toString();
+        } else if (obj instanceof Map) {
+            result = navigateMap(obj).toString();
         } else {
-            result = objToJson(obj).toString();
+            result = classToJson(obj).toString();
         }
         return result;
-    }
-
-    private static JsonObject objToJson(Object obj) {
-        JsonObject jsonObject;
-        if (obj instanceof Map) {
-            jsonObject = navigateMap(obj);
-        } else {
-            jsonObject = classToJson(obj);
-        }
-        return jsonObject;
     }
 
     private static JsonObject classToJson(Object obj) {
@@ -70,9 +62,7 @@ public class MySecondJSON {
         Field[] fields = aClazz.getDeclaredFields();
         for (Field field : fields) {
             int modifiers = field.getModifiers();
-            if (Modifier.isStatic(modifiers)) {
-                continue;
-            }
+            if (Modifier.isStatic(modifiers)) continue;
             field.setAccessible(true);
             String fieldName = field.getName();
             Object fieldObj = null;
@@ -82,27 +72,7 @@ public class MySecondJSON {
                 e.printStackTrace();
             }
             if (fieldObj == null) continue;
-            if (fieldObj instanceof String) {
-                jsonObjBuilder.add(fieldName, fieldObj.toString());
-            } else if (fieldObj instanceof Integer || fieldObj instanceof Short) {
-                jsonObjBuilder.add(fieldName, (int) fieldObj);
-            } else if (fieldObj instanceof Long || fieldObj instanceof Byte || fieldObj instanceof Character) {
-                jsonObjBuilder.add(fieldName, (long) fieldObj);
-            } else if (fieldObj instanceof Double || fieldObj instanceof Float) {
-                jsonObjBuilder.add(fieldName, (double) fieldObj);
-            } else if (fieldObj instanceof Boolean) {
-                jsonObjBuilder.add(fieldName, (boolean) fieldObj);
-            } else if (fieldObj instanceof BigDecimal) {
-                jsonObjBuilder.add(fieldName, (BigDecimal) fieldObj);
-            } else if (fieldObj instanceof BigInteger) {
-                jsonObjBuilder.add(fieldName, (BigInteger) fieldObj);
-            } else if (fieldObj.getClass().isArray() || fieldObj instanceof Collection) {
-                jsonObjBuilder.add(fieldName, navigateArray(fieldObj));
-            } else if (fieldObj instanceof Map) {
-                jsonObjBuilder.add(fieldName, navigateMap(fieldObj));
-            } else {
-                jsonObjBuilder.add(fieldName, classToJson(fieldObj));
-            }
+            jsonBuilderAdd(jsonObjBuilder, null, fieldName, fieldObj);
             field.setAccessible(false);
         }
         return jsonObjBuilder.build();
@@ -115,30 +85,11 @@ public class MySecondJSON {
         }
         for (int i = 0; i < Array.getLength(fieldObj); i++) {
             Object arrayObj = Array.get(fieldObj, i);
-
             if (arrayObj == null) {
                 arrayBuilder.addNull();
-            } else if (arrayObj instanceof String) {
-                arrayBuilder.add((String) arrayObj);
-            } else if (arrayObj instanceof Integer || fieldObj instanceof Short) {
-                arrayBuilder.add((int) arrayObj);
-            } else if (arrayObj instanceof Long || fieldObj instanceof Byte || fieldObj instanceof Character) {
-                arrayBuilder.add((long) arrayObj);
-            } else if (arrayObj instanceof Double || fieldObj instanceof Float) {
-                arrayBuilder.add((double) arrayObj);
-            } else if (arrayObj instanceof Boolean) {
-                arrayBuilder.add((boolean) arrayObj);
-            } else if (arrayObj instanceof BigDecimal) {
-                arrayBuilder.add((BigDecimal) arrayObj);
-            } else if (arrayObj instanceof BigInteger) {
-                arrayBuilder.add((BigInteger) arrayObj);
-            } else if (arrayObj.getClass().isArray()) {
-                arrayBuilder.add(navigateArray(arrayObj));
-            } else if (arrayObj instanceof Map) {
-                arrayBuilder.add(navigateMap(arrayObj));
-            } else {
-                arrayBuilder.add(classToJson(arrayObj));
+                continue;
             }
+            jsonBuilderAdd(null, arrayBuilder, null, arrayObj);
         }
         return arrayBuilder.build();
     }
@@ -148,56 +99,45 @@ public class MySecondJSON {
         for (Map.Entry<?, ?> entry : ((Map<?, ?>) fieldObj).entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();
-
             if (key == null) key = "null";
             if (value == null) continue;
-
-            if (value instanceof String) {
-                objectBuilder.add(key.toString(), (String) value);
-            } else if (value instanceof Integer) {
-                objectBuilder.add(key.toString(), (int) value);
-            } else if (value instanceof Long) {
-                objectBuilder.add(key.toString(), (long) value);
-            } else if (value instanceof Double) {
-                objectBuilder.add(key.toString(), (double) value);
-            } else if (value instanceof Boolean) {
-                objectBuilder.add(key.toString(), (Boolean) value);
-            } else if (value instanceof BigDecimal) {
-                objectBuilder.add(key.toString(), (BigDecimal) value);
-            } else if (value instanceof BigInteger) {
-                objectBuilder.add(key.toString(), (BigInteger) value);
-            } else if (value.getClass().isArray() || fieldObj instanceof Collection) {
-                objectBuilder.add(key.toString(), navigateArray(value));
-            } else {
-                objectBuilder.add(key.toString(), objToJson(value));
-            }
+            jsonBuilderAdd(objectBuilder, null, key.toString(), value);
         }
         return objectBuilder.build();
     }
 
-    private static void jsonBuilderAdd(JsonObjectBuilder jsonObjBuilder, JsonArrayBuilder jsonOArrayBuilder,
-                                       String fieldName, Object fieldObj){
+    private static void jsonBuilderAdd(JsonObjectBuilder jsonObjBuilder, JsonArrayBuilder jsonArrayBuilder,
+                                       String fieldName, Object fieldObj) {
         if (fieldObj instanceof String) {
-            jsonObjBuilder.add(fieldName, fieldObj.toString());
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, fieldObj.toString());
+            else jsonArrayBuilder.add(fieldObj.toString());
         } else if (fieldObj instanceof Integer || fieldObj instanceof Short) {
-            jsonObjBuilder.add(fieldName, (int) fieldObj);
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, (int) fieldObj);
+            else jsonArrayBuilder.add((int) fieldObj);
         } else if (fieldObj instanceof Long || fieldObj instanceof Byte || fieldObj instanceof Character) {
-            jsonObjBuilder.add(fieldName, (long) fieldObj);
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, (long) fieldObj);
+            else jsonArrayBuilder.add((long) fieldObj);
         } else if (fieldObj instanceof Double || fieldObj instanceof Float) {
-            jsonObjBuilder.add(fieldName, (double) fieldObj);
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, (double) fieldObj);
+            else jsonArrayBuilder.add((double) fieldObj);
         } else if (fieldObj instanceof Boolean) {
-            jsonObjBuilder.add(fieldName, (boolean) fieldObj);
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, (boolean) fieldObj);
+            else jsonArrayBuilder.add((boolean) fieldObj);
         } else if (fieldObj instanceof BigDecimal) {
-            jsonObjBuilder.add(fieldName, (BigDecimal) fieldObj);
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, (BigDecimal) fieldObj);
+            else jsonArrayBuilder.add((BigDecimal) fieldObj);
         } else if (fieldObj instanceof BigInteger) {
-            jsonObjBuilder.add(fieldName, (BigInteger) fieldObj);
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, (BigInteger) fieldObj);
+            else jsonArrayBuilder.add((BigInteger) fieldObj);
         } else if (fieldObj.getClass().isArray() || fieldObj instanceof Collection) {
-            jsonObjBuilder.add(fieldName, navigateArray(fieldObj));
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, navigateArray(fieldObj));
+            else jsonArrayBuilder.add(navigateArray(fieldObj));
         } else if (fieldObj instanceof Map) {
-            jsonObjBuilder.add(fieldName, navigateMap(fieldObj));
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, navigateMap(fieldObj));
+            else jsonArrayBuilder.add(navigateMap(fieldObj));
         } else {
-            jsonObjBuilder.add(fieldName, classToJson(fieldObj));
+            if (jsonObjBuilder != null) jsonObjBuilder.add(fieldName, classToJson(fieldObj));
+            else jsonArrayBuilder.add(classToJson(fieldObj));
         }
     }
-
 }
