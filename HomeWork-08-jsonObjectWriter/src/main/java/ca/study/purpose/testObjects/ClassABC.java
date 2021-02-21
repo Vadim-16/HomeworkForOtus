@@ -1,4 +1,4 @@
-package ca.study.purpose;
+package ca.study.purpose.testObjects;
 
 public class ClassABC {
     private int numberABC = 6;

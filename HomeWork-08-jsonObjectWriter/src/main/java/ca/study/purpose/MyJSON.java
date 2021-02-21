@@ -1,5 +1,6 @@
 package ca.study.purpose;
 
+import ca.study.purpose.testObjects.ClassABC;
 import ca.study.purpose.testObjects.Rule;
 import com.google.gson.Gson;
 
