@@ -3,7 +3,6 @@ package ca.study.purpose;
 import ca.study.purpose.testObjects.Rule;
 import com.google.gson.Gson;
 
-import javax.json.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -18,7 +17,7 @@ public class MyJSON {
         String fromGSON = gson.toJson(class1);
         System.out.println(fromGSON);
 
-        String fromMySecondJson = toMySecondJson(class1);
+        String fromMySecondJson = toMyJson(class1);
         System.out.println(fromMySecondJson);
 
         System.out.println("fromGSON = fromMySecondJson ? " + fromGSON.equals(fromMySecondJson));
@@ -30,23 +29,6 @@ public class MyJSON {
 //        System.out.println(class2);
     }
 
-    public static String toMySecondJson(Object obj) throws IllegalAccessException {
-        JsonObjectBuilder objBuilder = Json.createObjectBuilder();
-        Class<?> aClazz = obj.getClass();
-        Field[] declaredFields = aClazz.getDeclaredFields();
-        for (Field field : declaredFields) {
-            field.setAccessible(true);
-            Object fieldObject = field.get(obj);
-
-            field.setAccessible(false);
-        }
-        JsonObject build = objBuilder.build();
-        System.out.println(build);
-        return "";
-    }
-
-
-
     public static String toMyJson(Object obj) throws IllegalAccessException, NoSuchFieldException {
         Class<?> aClazz = obj.getClass();
         Field[] fields = aClazz.getDeclaredFields();
@@ -56,7 +38,6 @@ public class MyJSON {
             field.setAccessible(true);
             stringBuilder.append("\"").append(field.getName()).append("\"").append(":");
             String s = field.getType().getSimpleName();
-            System.out.println(s);
             switch (s) {
                 case "String": {
                     stringBuilder.append("\"").append(field.get(obj)).append("\"");
@@ -160,12 +141,18 @@ public class MyJSON {
         public Object[] objects = new Object[]{new Object(), "", 54, new ClassABC()};
         ArrayList<Integer> integerList = new ArrayList<>(Arrays.asList(9, 8, 7, 6, 5));
         private Set<String> set = new HashSet<>(Arrays.asList("ten", "eleven", "twelve"));
-        private Map<String, Rule> map = new HashMap();
+        private Map<Rule, Map<Rule, Rule>> map = new HashMap();
+        private final ArrayList<Map<String, Rule>> rules3 = new ArrayList<>();
 
-
-        public SomeClass() {
-            map.put("oneHundred", null);
-            map.put("twoHundred", new Rule());
+        {
+            Map<String, Rule> maps = new HashMap<>();
+            maps.put("1", null);
+            rules3.add(maps);
+            map.put(new Rule(), null);
+            Map<Rule, Rule> maps2 = new HashMap<>();
+            maps2.put(null, new Rule());
+            maps2.put(new Rule(), new Rule());
+            map.put(new Rule(), maps2);
         }
 
         @Override
@@ -180,12 +167,13 @@ public class MyJSON {
                     Arrays.equals(objects, someClass.objects) &&
                     Objects.equals(integerList, someClass.integerList) &&
                     Objects.equals(set, someClass.set) &&
-                    Objects.equals(map, someClass.map);
+                    Objects.equals(map, someClass.map) &&
+                    Objects.equals(rules3, someClass.rules3);
         }
 
         @Override
         public int hashCode() {
-            int result = Objects.hash(abc, word, doubleNumber, integerList, set, map);
+            int result = Objects.hash(abc, word, doubleNumber, integerList, set, map, rules3);
             result = 31 * result + Arrays.hashCode(numbers);
             result = 31 * result + Arrays.hashCode(objects);
             return result;

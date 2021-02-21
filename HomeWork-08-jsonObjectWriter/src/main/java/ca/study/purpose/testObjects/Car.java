@@ -21,13 +21,13 @@ public class Car {
         rules3.add(maps);
     }
 
-    @Override
-    public String toString() {
-        return "Car{" +
-                "doors=" + doors +
-                ", color='" + color + '\'' +
-                ", working=" + working +
-                ", salon=" + salon +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Car{" +
+//                "doors=" + doors +
+//                ", color='" + color + '\'' +
+//                ", working=" + working +
+//                ", salon=" + salon +
+//                '}';
+//    }
 }
