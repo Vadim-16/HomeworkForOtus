@@ -7,6 +7,7 @@ public class User {
     private long age;
 
     public User(long id, String name, long age) {
+        this.id = id;
         this.name = name;
         this.age = age;
     }
@@ -33,5 +34,14 @@ public class User {
 
     public void setAge(long age) {
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", Name='" + name + '\'' +
+                ", Age=" + age +
+                '}';
     }
 }

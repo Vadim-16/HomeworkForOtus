@@ -1,59 +1,79 @@
 package ca.study.purpose;
 
 import java.sql.*;
+import java.util.Optional;
 
 public class H2MyImpl  {
     private static final String URL = "jdbc:h2:mem:";
 
-    public static void main(String[] args) throws SQLException, IllegalAccessException {
+    public static void main(String[] args) throws SQLException{
         H2MyImpl demo = new H2MyImpl();
         Connection connection = demo.getConnection();
         demo.createUserTable(connection);
-
         demo.createAccountTable(connection);
 
 
+        User user1 = new User(0, "Samuel", 29);
+        User user2 = new User(0, "Jim", 21);
+        User user3 = new User(0, "Samantha", 36);
+
         JdbcTemplate<User> jdbcTemplate = new JdbcTemplate<>(connection);
+        long userId1 = jdbcTemplate.create(user1);
+        user1.setId(userId1);
+        long userId2 = jdbcTemplate.create(user2);
+        user2.setId(userId2);
+        long userId3 = jdbcTemplate.create(user3);
+        user3.setId(userId3);
 
-        long userId1 = jdbcTemplate.createUser(new User(0, "Samuel", 29));
-        System.out.println("created user:" + userId1);
+        Optional<User> load1 = jdbcTemplate.load(2, User.class);
+        System.out.println(load1);
+        Optional<User> load2 = jdbcTemplate.load(3, User.class);
+        System.out.println(load2);
 
-        long userId2 = jdbcTemplate.createUser(new User(0, "Jim", 21));
-        System.out.println("created user:" + userId2);
+        jdbcTemplate.update(new User(3, "Monica", 56));
+        Optional<User> load5 = jdbcTemplate.load(3, User.class);
+        System.out.println(load5);
 
-        long userId3 = jdbcTemplate.createUser(new User(0, "Samantha", 36));
-        System.out.println("created user:" + userId3);
+        System.out.println("----------------------------");
 
-        connection.commit();
+        Account account1 = new Account(0, "Credit", 14_000);
+        Account account2 = new Account(0, "Debit", 9_500);
+        Account account3 = new Account(0, "Debit", 1_632_233);
 
-//        Optional<User> user = executor.selectRecord("select id, name from user where id  = ?", userId, resultSet -> {
-//            try {
-//                if (resultSet.next()) {
-//                    return new User(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getLong("age"));
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        });
-//        System.out.println(user);
+        JdbcTemplate<Account> jdbcTemplate2 = new JdbcTemplate<>(connection);
+
+        long accountNo1 = jdbcTemplate2.create(account1);
+        account1.setNo(accountNo1);
+        long accountNo2 = jdbcTemplate2.create(account2);
+        account2.setNo(accountNo2);
+        long accountNo3 = jdbcTemplate2.create(account3);
+        account3.setNo(accountNo3);
+
+        Optional<Account> load3 = jdbcTemplate2.load(3, Account.class);
+        System.out.println(load3);
+        Optional<Account> load4 = jdbcTemplate2.load(1, Account.class);
+        System.out.println(load4);
+
+        jdbcTemplate2.update(new Account(3, "Credit(VISA)", 554_846));
+        Optional<Account> load6 = jdbcTemplate2.load(3, Account.class);
+        System.out.println(load6);
 
         connection.close();
     }
 
-    private Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         Connection connection = DriverManager.getConnection(URL);
         connection.setAutoCommit(false);
         return connection;
     }
 
-    private void createUserTable(Connection connection) throws SQLException {
+    public void createUserTable(Connection connection) throws SQLException {
         try (PreparedStatement pst = connection.prepareStatement("create table User(id bigint(20) NOT NULL auto_increment, name varchar(255), age int(3))")) {
             pst.executeUpdate();
         }
     }
 
-    private void createAccountTable(Connection connection) throws SQLException {
+    public void createAccountTable(Connection connection) throws SQLException {
         try (PreparedStatement pst = connection.prepareStatement("create table Account(no bigint(20) NOT NULL auto_increment, type varchar(255), rest number)")) {
             pst.executeUpdate();
         }
