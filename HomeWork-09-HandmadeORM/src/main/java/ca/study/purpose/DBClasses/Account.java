@@ -1,15 +1,18 @@
-package ca.study.purpose;
+package ca.study.purpose.DBClasses;
 
 public class Account {
 
-    @Id private long no;
+    @Id
+    private long no;
     private String type;
     private long rest;
+    private boolean locked;
 
-    public Account(long no, String type, long rest) {
+    public Account(long no, String type, long rest, boolean locked) {
         this.no = no;
         this.type = type;
         this.rest = rest;
+        this.locked = locked;
     }
 
     public long getNo() {
@@ -36,12 +39,21 @@ public class Account {
         this.rest = rest;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
                 "no=" + no +
                 ", Type='" + type + '\'' +
                 ", Rest=" + rest +
+                ", locked=" + locked +
                 '}';
     }
 }

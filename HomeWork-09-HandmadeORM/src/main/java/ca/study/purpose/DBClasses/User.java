@@ -1,7 +1,6 @@
-package ca.study.purpose;
+package ca.study.purpose.DBClasses;
 
 public class User {
-
     @Id private long id;
     private String name;
     private long age;

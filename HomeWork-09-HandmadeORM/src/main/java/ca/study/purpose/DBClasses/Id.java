@@ -1,4 +1,4 @@
-package ca.study.purpose;
+package ca.study.purpose.DBClasses;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
