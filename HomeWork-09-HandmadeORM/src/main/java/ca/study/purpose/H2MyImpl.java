@@ -18,8 +18,8 @@ public class H2MyImpl {
     public static void main(String[] args) throws SQLException, IllegalAccessException {
         H2MyImpl demo = new H2MyImpl();
         MyDataSource myDataSource = new MyDataSource();
-        MyDbExecutor<User> userExecutor = new MyDbExecutor<>(myDataSource);
-        MyDbExecutor<Account> accExecutor = new MyDbExecutor<>(myDataSource);
+        MyDbExecutor<User> userExecutor = new MyDbExecutor<>(myDataSource.getConnection());
+        MyDbExecutor<Account> accExecutor = new MyDbExecutor<>(myDataSource.getConnection());
         demo.createUserTable(new MyDataSource().getConnection());
         demo.createAccountTable(myDataSource.getConnection());
 
@@ -44,11 +44,13 @@ public class H2MyImpl {
         });
         System.out.println(user);
 
-        JdbcTemplate<User> jdbcTemplate1 = new JdbcTemplate<>(userExecutor, myDataSource);
+        JdbcTemplate<User> jdbcTemplate1 = new JdbcTemplate<>(myDataSource);
         jdbcTemplate1.create(new User(2, "Sam", 33));
 
-        JdbcTemplate<Account> jdbcTemplate2 = new JdbcTemplate<>(accExecutor, myDataSource);
+        JdbcTemplate<Account> jdbcTemplate2 = new JdbcTemplate<>(myDataSource);
         jdbcTemplate2.create(new Account(2, "Credit", 657_000, false));
+
+        jdbcTemplate2.load(1, Account.class);
 
 //        User user1 = new User(0, "Samuel", 29);
 //        User user2 = new User(0, "Jim", 21);

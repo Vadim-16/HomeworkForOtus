@@ -1,59 +1,49 @@
 package ca.study.purpose.JdbcTemplate;
 
 import ca.study.purpose.DBClasses.Id;
+import ca.study.purpose.DBClasses.User;
 import ca.study.purpose.Executor.MyDbExecutor;
 
 
-import java.lang.reflect.Field;
+import javax.sql.DataSource;
+import java.lang.reflect.*;
 import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
 
 public class JdbcTemplate<T> implements JdbcTemplateInterface<T> {
-    private final MyDbExecutor<T> executor;
-    private final MyDataSource myDataSource;
+    private final DataSource myDataSource;
 
-    public JdbcTemplate(MyDbExecutor<T> executor, MyDataSource myDataSource) {
-        this.executor = executor;
+    public JdbcTemplate(DataSource myDataSource) {
         this.myDataSource = myDataSource;
     }
 
-    public void create(T obj) throws SQLException, IllegalAccessException {
-        checkIdAnnotation(obj);
-        String sql = formInsertStatement(obj);
-        List<Object> params = formInsertParams(obj);
+    public void create(T obj) {
+        Class<?> clazz = obj.getClass();
+        String clazzName = clazz.getSimpleName();
+        Field[] declaredFields = clazz.getDeclaredFields();
 
-        long l = executor.executeDBStatement(sql, params);
-        System.out.println("Created " + obj.getClass().getSimpleName().toLowerCase() + ": " + l);
+        if (!idAnnotationCheck(declaredFields)) {
+            System.out.println("Abort create: no @Id present in " + clazzName);
+            return;
+        }
+        String sql = formInsertStatement(obj, declaredFields, clazzName);
+        List<Object> params = formInsertParams(obj, declaredFields);
 
-//        try (PreparedStatement pst = connection.prepareStatement(String.format("INSERT INTO %s(%s, %s) VALUES (?, ?)",
-//                tableName, fieldName1, fieldName2), Statement.RETURN_GENERATED_KEYS)) {
-//            for (int i = 1; i < declaredFields.length; i++) {
-//                declaredFields[i].setAccessible(true);
-//                if (declaredFields[i].get(obj) instanceof String) {
-//                    pst.setString(i, (String) declaredFields[i].get(obj));
-//                } else pst.setLong(i, (Long) declaredFields[i].get(obj));
-//                declaredFields[i].setAccessible(false);
-//            }
-//            pst.executeUpdate();
-//            ResultSet rs = pst.getGeneratedKeys();
-//            rs.next();
-//            int userId = rs.getInt(1);
-//            connection.commit();
-//            System.out.println("created " + tableName.toLowerCase() + ":" + userId);
-//            return userId;
-//        } catch (IllegalAccessException ex) {
-//            this.connection.rollback(savePoint);
-//            System.out.println(ex.getMessage());
-//            throw new RuntimeException();
-//        }
+        try (Connection connection = myDataSource.getConnection()) {
+            MyDbExecutor<T> executor = new MyDbExecutor<>(connection);
+            long generatedId = executor.executeDBStatement(sql, params);
+            connection.commit();
+            System.out.println("Created " + clazzName.toLowerCase() + ": " + generatedId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private String formInsertStatement(T obj) {
+    private String formInsertStatement(T obj, Field[] declaredFields, String clazzName) {
         StringBuilder columnsName = new StringBuilder();
         StringBuilder values = new StringBuilder();
-        Class<?> clazz = obj.getClass();
-        Field[] declaredFields = clazz.getDeclaredFields();
 
         for (int i = 0; i < declaredFields.length; i++) {
             Field field = declaredFields[i];
@@ -63,31 +53,26 @@ public class JdbcTemplate<T> implements JdbcTemplateInterface<T> {
         }
         columnsName.deleteCharAt(columnsName.length() - 1);
         values.deleteCharAt(values.length() - 1);
-        return String.format("INSERT INTO %s(%s) VALUES (%s)", clazz.getSimpleName(), columnsName, values);
+        return String.format("INSERT INTO %s(%s) VALUES (%s)", clazzName, columnsName, values);
     }
 
-    private List<Object> formInsertParams(T obj) throws IllegalAccessException {
+    private List<Object> formInsertParams(T obj, Field[] declaredFields) {
         List<Object> params = new ArrayList<>();
-        Class<?> clazz = obj.getClass();
-        Field[] declaredFields = clazz.getDeclaredFields();
         for (int i = 0; i < declaredFields.length; i++) {
             Field field = declaredFields[i];
-            field.setAccessible(true);
             if (field.isAnnotationPresent(Id.class)) continue;
-            params.add(field.get(obj));
+            field.setAccessible(true);
+            try {
+                params.add(field.get(obj));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
             field.setAccessible(false);
         }
         return params;
     }
 
-    private void checkIdAnnotation(T obj) {
-        Class<?> clazz = obj.getClass();
-        if (!validate(obj.getClass().getDeclaredFields())) {
-            System.out.println("No @Id present in " + clazz.getSimpleName());
-        }
-    }
-
-    private boolean validate(Field[] declaredFields) {
+    private boolean idAnnotationCheck(Field[] declaredFields) {
         for (Field field : declaredFields) {
             if (field.isAnnotationPresent(Id.class)) return true;
         }
@@ -134,11 +119,43 @@ public class JdbcTemplate<T> implements JdbcTemplateInterface<T> {
     }
 
     public Optional<T> load(long id, Class<T> clazz) {
-//        Field[] declaredFields = getFields(clazz);
-//        String tableName = clazz.getSimpleName();
-//        String fieldName0 = declaredFields[0].getName();
-//        String fieldName1 = declaredFields[1].getName();
-//        String fieldName2 = declaredFields[2].getName();
+        String clazzName = clazz.getSimpleName();
+        Field[] declaredFields = clazz.getDeclaredFields();
+
+        if (!idAnnotationCheck(declaredFields)) {
+            System.out.println("Abort load: no @Id present in " + clazzName);
+            return Optional.empty();
+        }
+
+        String sql = formSelectStatement(declaredFields, clazzName);
+        System.out.println(sql);
+        try (Connection connection = myDataSource.getConnection()) {
+            MyDbExecutor<T> executor = new MyDbExecutor<>(connection);
+            executor.selectRecord(sql, id, resultSet -> {
+                        try {
+                            if (resultSet.next()) {
+                                ResultSetMetaData metaData = resultSet.getMetaData();
+                                System.out.println(metaData.getColumnLabel(1));
+                                Object object = resultSet.getObject(1);
+                                System.out.println(object);
+
+                                Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
+                                T instance = null;
+                                for (Constructor<?> constructor: declaredConstructors) {
+
+
+                                }
+
+                                return null;
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                return null;
+                    });
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 //        try {
 //            Optional<T> user = selectRecord(String.format("SELECT %s, %s, %s FROM %s WHERE %s  = ?",
 //                    fieldName0, fieldName1, fieldName2, tableName, fieldName0),
@@ -161,6 +178,35 @@ public class JdbcTemplate<T> implements JdbcTemplateInterface<T> {
 //            throw new RuntimeException(ex);
 //        }
         return null;
+    }
+
+    private Optional<T> makeClassFromDb(Class<T> clazz, Field[] declaredFields, ResultSet resultSet) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
+
+
+
+        for (int i = 0; i < declaredFields.length; i++) {
+            Field field = declaredFields[i];
+            field.setAccessible(true);
+
+        }
+
+        return Optional.empty();
+    }
+
+    private String formSelectStatement(Field[] declaredFields, String clazzName) {
+        StringBuilder columnsName = new StringBuilder();
+        String id = "";
+        for (int i = 0; i < declaredFields.length; i++) {
+            Field field = declaredFields[i];
+            if (field.isAnnotationPresent(Id.class)) {
+                id = field.getName();
+                continue;
+            }
+            columnsName.append(field.getName()).append(",");
+        }
+        columnsName.deleteCharAt(columnsName.length() - 1);
+        return String.format("SELECT (%s) FROM %s WHERE %s = ?", columnsName, clazzName, id);
     }
 
 

@@ -9,34 +9,32 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class MyDbExecutor<T> implements DbExecutorInterface<T> {
+    private final Connection connection;
 
-    private final MyDataSource myDataSource;
-
-    public MyDbExecutor(MyDataSource myDataSource) {
-        this.myDataSource = myDataSource;
+    public MyDbExecutor(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
     public long executeDBStatement(String sql, List<Object> params) throws SQLException {
-        Connection connection = myDataSource.getConnection();
         Savepoint savePoint = connection.setSavepoint("savePointName");
-        try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             setParams(pst, params);
             pst.executeUpdate();
             try (ResultSet rs = pst.getGeneratedKeys()) {
                 rs.next();
                 return rs.getInt(1);
             }
-        } catch (SQLException ex) {
-            connection.rollback(savePoint);
-            System.out.println(ex.getMessage());
-            throw ex;
+        } catch(SQLException e){
+            this.connection.rollback(savePoint);
+            System.out.println(e.getMessage());
+            throw e;
         }
     }
 
     @Override
     public Optional<T> selectRecord(String sql, long id, Function<ResultSet, T> rsHandler) throws SQLException {
-        try (PreparedStatement pst = myDataSource.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setLong(1, id);
             try (ResultSet rs = pst.executeQuery()) {
                 return Optional.ofNullable(rsHandler.apply(rs));
