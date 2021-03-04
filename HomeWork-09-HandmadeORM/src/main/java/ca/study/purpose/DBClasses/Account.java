@@ -8,6 +8,8 @@ public class Account {
     private long rest;
     private boolean locked;
 
+    public Account(){}
+
     public Account(long no, String type, long rest, boolean locked) {
         this.no = no;
         this.type = type;

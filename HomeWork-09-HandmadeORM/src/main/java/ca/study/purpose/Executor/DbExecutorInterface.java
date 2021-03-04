@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public interface DbExecutorInterface<T> {
-    long executeDBStatement(String sql, List<Object> params) throws SQLException;
+    long executeInsert(String sql, List<Object> params) throws SQLException;
+    void executeUpdate(String sql, List<Object> params) throws SQLException;
     Optional<T> selectRecord(String sql, long id, Function<ResultSet, T> rsHandler) throws SQLException;
 }

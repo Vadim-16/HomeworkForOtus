@@ -1,8 +1,7 @@
 package ca.study.purpose.Executor;
 
 
-import ca.study.purpose.JdbcTemplate.MyDataSource;
-
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
@@ -16,16 +15,28 @@ public class MyDbExecutor<T> implements DbExecutorInterface<T> {
     }
 
     @Override
-    public long executeDBStatement(String sql, List<Object> params) throws SQLException {
+    public long executeInsert(String sql, List<Object> params) throws SQLException {
         Savepoint savePoint = connection.setSavepoint("savePointName");
-        try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setParams(pst, params);
             pst.executeUpdate();
             try (ResultSet rs = pst.getGeneratedKeys()) {
                 rs.next();
                 return rs.getInt(1);
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
+            this.connection.rollback(savePoint);
+            System.out.println(e.getMessage());
+            throw e;
+        }
+    }
+
+    public void executeUpdate(String sql, List<Object> params) throws SQLException {
+        Savepoint savePoint = connection.setSavepoint("savePointName");
+        try (PreparedStatement pst = connection.prepareStatement(sql, Statement.NO_GENERATED_KEYS)) {
+            setParams(pst, params);
+            pst.executeUpdate();
+        } catch (SQLException e) {
             this.connection.rollback(savePoint);
             System.out.println(e.getMessage());
             throw e;
@@ -47,9 +58,16 @@ public class MyDbExecutor<T> implements DbExecutorInterface<T> {
             Object parameter = params.get(i);
             if (parameter instanceof String) {
                 pst.setString(i + 1, (String) parameter);
-            } else if (parameter instanceof Byte || parameter instanceof Short
-                    || parameter instanceof Integer || parameter instanceof Long) {
+            } else if (parameter instanceof Byte) {
+                pst.setByte(i + 1, (byte) parameter);
+            } else if (parameter instanceof Short) {
+                pst.setShort(i + 1, (short) parameter);
+            } else if (parameter instanceof Integer) {
+                pst.setInt(i + 1, (int) parameter);
+            } else if (parameter instanceof Long) {
                 pst.setLong(i + 1, (long) parameter);
+            } else if (parameter instanceof BigDecimal) {
+                pst.setBigDecimal(i + 1, (BigDecimal) parameter);
             } else if (parameter instanceof Double) {
                 pst.setDouble(i + 1, (double) parameter);
             } else if (parameter instanceof Float) {

@@ -1,127 +1,91 @@
-//import ca.study.purpose.DBClasses.Account;
-//import ca.study.purpose.H2MyImpl;
-//import ca.study.purpose.JdbcTemplate.JdbcTemplate;
-//import ca.study.purpose.DBClasses.User;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.SQLException;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//
-//public class JdbcTemplateTester {
-//    private Connection connection;
-//    private JdbcTemplate jdbcTemplate;
-//    private H2MyImpl h2MyImpl;
-//
-//
-//    @BeforeEach
-//    public void setUp() {
-//        try {
-//            this.connection = DriverManager.getConnection("jdbc:h2:mem:");
-//            this.jdbcTemplate = new JdbcTemplate(connection);
-//            this.h2MyImpl = new H2MyImpl();
-//            h2MyImpl.createAccountTable(connection);
-//            h2MyImpl.createUserTable(connection);
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testLoadUser(){
-//        try {
-//            long natalia = jdbcTemplate.create(new User(1, "Natalia", 32));
-//            long alex = jdbcTemplate.create(new User(2, "Alex", 34));
-//            User user = (User)jdbcTemplate.load(2, User.class).get();
-//            assertEquals(2, user.getId());
-//            assertEquals("Alex", user.getName());
-//            assertEquals(34, user.getAge());
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testLoadAccount(){
-//        try {
-//            long acc1 = jdbcTemplate.create(new Account(1, "Credit", 100_000));
-//            long acc2 = jdbcTemplate.create(new Account(2, "Debit", 145_742));
-//            Account acc = (Account)jdbcTemplate.load(2, Account.class).get();
-//            assertEquals(2, acc.getNo());
-//            assertEquals("Debit", acc.getType());
-//            assertEquals(145_742, acc.getRest());
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testCreateUser(){
-//        try {
-//            long natalia = jdbcTemplate.create(new User(1, "Natalia", 32));
-//            long alex = jdbcTemplate.create(new User(2, "Alex", 34));
-//            User user = (User)jdbcTemplate.load(2, User.class).get();
-//            assertEquals(2, user.getId());
-//            assertEquals(34, user.getAge());
-//            assertEquals("Alex", user.getName());
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testCreateAccount(){
-//        try {
-//            long acc1 = jdbcTemplate.create(new Account(1, "Credit", 100_000));
-//            long acc2 = jdbcTemplate.create(new Account(2, "Debit", 145_742));
-//            Account acc = (Account)jdbcTemplate.load(2, Account.class).get();
-//            assertEquals(2, acc.getNo());
-//            assertEquals(145_742, acc.getRest());
-//            assertEquals("Debit", acc.getType());
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testUpdateAccount(){
-//        try {
-//            long acc1 = jdbcTemplate.create(new Account(1, "Credit", 100_000));
-//            jdbcTemplate.update(new Account(1, "Credit(VISA)", 97_632));
-//            Account acc = (Account)jdbcTemplate.load(1, Account.class).get();
-//            assertEquals(1, acc.getNo());
-//            assertEquals(97_632, acc.getRest());
-//            assertEquals("Credit(VISA)", acc.getType());
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testUpdateUser(){
-//        try {
-//            long natalia = jdbcTemplate.create(new User(1, "Natalia", 32));
-//            jdbcTemplate.update(new User(1, "Antony", 27));
-//            User user = (User)jdbcTemplate.load(1, User.class).get();
-//            assertEquals(1, user.getId());
-//            assertEquals(27, user.getAge());
-//            assertEquals("Antony", user.getName());
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//    @AfterEach
-//    public void close() {
-//        try {
-//            connection.close();
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//    }
-//
-//}
+import ca.study.purpose.DBClasses.Account;
+import ca.study.purpose.H2MyImpl;
+import ca.study.purpose.JdbcTemplate.JdbcTemplate;
+import ca.study.purpose.DBClasses.User;
+import ca.study.purpose.JdbcTemplate.MyDataSource;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class JdbcTemplateTester {
+    private JdbcTemplate jdbcTemplate;
+    private Connection connection;
+
+    @BeforeEach
+    public void setUp() {
+        MyDataSource myDataSource = new MyDataSource();
+        try {
+            this.connection = myDataSource.getConnection();
+            jdbcTemplate = new JdbcTemplate(myDataSource);
+            H2MyImpl demo = new H2MyImpl();
+            demo.createAccountTable(connection);
+            demo.createUserTable(connection);
+        } catch (SQLException ignored) {
+        }
+    }
+
+    @Test
+    public void testCreateLoadUser() {
+        jdbcTemplate.create(new User(2, "Natalia", 32));
+        jdbcTemplate.create(new User(3, "Alex", 34));
+        Optional load = jdbcTemplate.load(3, User.class);
+        User user = (User) load.get();
+        assertEquals(3, user.getId());
+        assertEquals("Alex", user.getName());
+        assertEquals(34, user.getAge());
+
+    }
+
+    @Test
+    public void testCreateLoadAccount() {
+        jdbcTemplate.create(new Account(2, "Credit", 100_000, true));
+        jdbcTemplate.create(new Account(3, "Debit", 145_742, false));
+        Optional load = jdbcTemplate.load(3, Account.class);
+        Account acc = (Account) load.get();
+        assertEquals(3, acc.getNo());
+        assertEquals("Debit", acc.getType());
+        assertEquals(145_742, acc.getRest());
+        assertFalse(acc.isLocked());
+    }
+
+    @Test
+    public void testUpdateAccount() {
+        jdbcTemplate.create(new Account(1, "Credit", 100_000, true));
+        jdbcTemplate.update(new Account(1, "Credit/Debit", 200_000, false));
+        Optional load = jdbcTemplate.load(1, Account.class);
+        Account acc = (Account) load.get();
+        assertEquals(1, acc.getNo());
+        assertEquals("Credit/Debit", acc.getType());
+        assertEquals(200_000, acc.getRest());
+        assertFalse(acc.isLocked());
+    }
+
+    @Test
+    public void testUpdateUser() {
+        jdbcTemplate.create(new User(1, "Emma", 35));
+        jdbcTemplate.update(new User(1, "Nelson", 19));
+        Optional load = jdbcTemplate.load(1, User.class);
+        User user = (User) load.get();
+        assertEquals(1, user.getId());
+        assertEquals("Nelson", user.getName());
+        assertEquals(19, user.getAge());
+    }
+
+    @AfterEach
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
