@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class MyDbExecutor<T> implements DbExecutorInterface<T> {
+public class MyDbExecutorImpl<T> implements DbExecutor<T> {
     private final Connection connection;
 
-    public MyDbExecutor(Connection connection) {
+    public MyDbExecutorImpl(Connection connection) {
         this.connection = connection;
     }
 
