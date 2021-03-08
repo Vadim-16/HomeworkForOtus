@@ -19,6 +19,7 @@
         <module>HomeWork-07-ATMDepartment</module>
         <module>HomeWork-08-jsonObjectWriter</module>
         <module>HomeWork-09-HandmadeORM</module>
+        <module>HomeWork-10-Hibernate</module>
     </modules>
 
     <properties>
