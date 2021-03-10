@@ -31,6 +31,10 @@
         <artifactId>hibernate-core</artifactId>
         <version>5.4.1.Final</version>
     </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+    </dependency>
 </dependencies>
 
 </project>

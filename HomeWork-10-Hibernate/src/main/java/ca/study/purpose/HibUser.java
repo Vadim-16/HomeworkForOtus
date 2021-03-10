@@ -5,6 +5,7 @@ import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user")
@@ -85,5 +86,21 @@ public class HibUser {
                 ", address=" + address +
                 ", phones=" + phones +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HibUser)) return false;
+        HibUser hibUser = (HibUser) o;
+        return getAge() == hibUser.getAge() &&
+                Objects.equals(getName(), hibUser.getName()) &&
+                Objects.equals(getAddress(), hibUser.getAddress()) &&
+                Objects.equals(getPhones(), hibUser.getPhones());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getAge(), getAddress(), getPhones());
     }
 }

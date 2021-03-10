@@ -1,6 +1,7 @@
 package ca.study.purpose;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "phone")
@@ -16,7 +17,7 @@ public class Phone {
     @JoinColumn(name = "user_id", nullable = false)
     private HibUser user;
 
-    Phone(){}
+    public Phone(){}
 
     public long getId() {
         return id;
@@ -47,5 +48,18 @@ public class Phone {
         return "Phone{" +
                 "number='" + number + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Phone phone = (Phone) o;
+        return Objects.equals(number, phone.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number);
     }
 }

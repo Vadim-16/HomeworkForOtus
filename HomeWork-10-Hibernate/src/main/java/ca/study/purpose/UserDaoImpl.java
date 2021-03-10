@@ -1,27 +1,26 @@
 package ca.study.purpose;
 
 
-import ca.study.purpose.JdbcTemplate.JdbcTemplate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MyHibernateImpl<T> implements JdbcTemplate<T> {
+public class UserDaoImpl<T> implements UserDao<T> {
     private static final String URL = "jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1";
     private final SessionFactory sessionFactory;
 
     public static void main(String[] args) {
-        MyHibernateImpl<HibUser> demo = new MyHibernateImpl<>();
+        UserDaoImpl<HibUser> demo = new UserDaoImpl<>();
 
         HibUser user1 = new HibUser();
         user1.setAge(25);
@@ -66,17 +65,17 @@ public class MyHibernateImpl<T> implements JdbcTemplate<T> {
 
 
         demo.create(user1);
-        System.out.println(demo.load(1, HibUser.class));
+        System.out.println("====================>" + demo.load(1, HibUser.class));
         demo.create(user2);
-        System.out.println(demo.load(2, HibUser.class));
+        System.out.println("====================>" + demo.load(2, HibUser.class));
 
         user2.setName("James Bond");
         user2.setAge(51);
         demo.update(user2);
-        System.out.println(demo.load(2, HibUser.class));
+        System.out.println("====================>" + demo.load(2, HibUser.class));
     }
 
-    private MyHibernateImpl() {
+    public UserDaoImpl() {
         Configuration configuration = new Configuration()
                 .configure("hibernate.cfg.xml");
 
@@ -95,29 +94,41 @@ public class MyHibernateImpl<T> implements JdbcTemplate<T> {
 
     @Override
     public void create(T obj) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.save(obj);
-            session.getTransaction().commit();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
         }
     }
 
     @Override
     public void update(T obj) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.update(obj);
-            session.getTransaction().commit();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
         }
     }
 
     @Override
     public Optional<T> load(long id, Class<T> clazz) {
         T selected = null;
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             selected = session.get(clazz, id);
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
         }
-        return Optional.of(selected);
+        return Optional.ofNullable(selected);
     }
 }
