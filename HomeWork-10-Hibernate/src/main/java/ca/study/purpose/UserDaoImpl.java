@@ -11,9 +11,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class UserDaoImpl<T> implements UserDao<T> {
     private static final String URL = "jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1";
@@ -31,7 +29,7 @@ public class UserDaoImpl<T> implements UserDao<T> {
         address1.setUser(user1);
         user1.setAddress(address1);
 
-        List<Phone> phones1 = new ArrayList<>();
+        Set<Phone> phones1 = new HashSet<>();
         Phone phone1 = new Phone();
         phone1.setNumber("123456789");
         phone1.setUser(user1);
@@ -52,7 +50,7 @@ public class UserDaoImpl<T> implements UserDao<T> {
         address2.setUser(user2);
         user2.setAddress(address2);
 
-        List<Phone> phones2 = new ArrayList<>();
+        Set<Phone> phones2 = new HashSet<>();
         Phone phone3 = new Phone();
         phone3.setNumber("999888777");
         phone3.setUser(user2);

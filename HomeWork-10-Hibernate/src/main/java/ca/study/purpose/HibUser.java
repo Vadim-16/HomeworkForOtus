@@ -1,11 +1,8 @@
 package ca.study.purpose;
 
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -24,7 +21,7 @@ public class HibUser {
     private Address address;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private List<Phone> phones = new ArrayList<>();
+    private Set<Phone> phones = new HashSet<>();
 
 
     public HibUser(){}
@@ -61,11 +58,11 @@ public class HibUser {
         this.address = address;
     }
 
-    public List<Phone> getPhones() {
+    public Set<Phone> getPhones() {
         return phones;
     }
 
-    public void setPhones(List<Phone> phones) {
+    public void setPhones(Set<Phone> phones) {
         this.phones = phones;
     }
 
