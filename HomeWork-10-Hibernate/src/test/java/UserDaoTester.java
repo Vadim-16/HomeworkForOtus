@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,8 +44,8 @@ public class UserDaoTester {
         System.out.println(user1);
         System.out.println(hibUser);
 
-        System.out.println(user1.hashCode());
-        System.out.println(hibUser.hashCode());
+        System.out.println("javaUser hashcode:" + user1.hashCode());
+        System.out.println("retrievedUser hashcode:" + hibUser.hashCode());
 
         assertEquals(true, Objects.equals(user1, hibUser));
     }

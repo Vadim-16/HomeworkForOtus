@@ -20,7 +20,7 @@ public class HibUser {
     @Column(name = "age", nullable = false)
     private long age;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Address address;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
@@ -28,14 +28,6 @@ public class HibUser {
 
 
     public HibUser(){}
-
-    public HibUser(long id, String name, long age, Address address, List<Phone> phones) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.address = address;
-        this.phones = phones;
-    }
 
     public long getId() {
         return id;
@@ -91,16 +83,17 @@ public class HibUser {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof HibUser)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         HibUser hibUser = (HibUser) o;
-        return getAge() == hibUser.getAge() &&
-                Objects.equals(getName(), hibUser.getName()) &&
-                Objects.equals(getAddress(), hibUser.getAddress()) &&
-                Objects.equals(getPhones(), hibUser.getPhones());
+        return id == hibUser.id &&
+                age == hibUser.age &&
+                Objects.equals(name, hibUser.name) &&
+                Objects.equals(address, hibUser.address) &&
+                Objects.equals(phones, hibUser.phones);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getAge(), getAddress(), getPhones());
+        return Objects.hash(id, name, age, address);
     }
 }

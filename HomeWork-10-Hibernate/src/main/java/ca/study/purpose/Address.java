@@ -13,7 +13,7 @@ public class Address {
     @Column(name = "street", nullable = false)
     private String street;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private HibUser user;
 
@@ -46,7 +46,8 @@ public class Address {
     @Override
     public String toString() {
         return "Address{" +
-                "street='" + street + '\'' +
+                "id=" + id +
+                ", street='" + street + '\'' +
                 '}';
     }
 
