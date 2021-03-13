@@ -1,4 +1,4 @@
-package ca.study.purpose;
+package ca.study.purpose.MyCache;
 
 import java.lang.ref.SoftReference;
 import java.util.*;
@@ -18,7 +18,7 @@ public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V> {
     private int hit = 0;
     private int miss = 0;
 
-    MyCacheEngineImpl(int maxElements, long lifeTimeMs, long idleTimeMs, boolean isEternal) {
+    public MyCacheEngineImpl(int maxElements, long lifeTimeMs, long idleTimeMs, boolean isEternal) {
         this.maxElements = maxElements;
         this.lifeTimeMs = lifeTimeMs > 0 ? lifeTimeMs : 0;
         this.idleTimeMs = idleTimeMs > 0 ? idleTimeMs : 0;

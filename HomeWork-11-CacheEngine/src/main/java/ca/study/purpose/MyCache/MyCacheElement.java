@@ -1,4 +1,4 @@
-package ca.study.purpose;
+package ca.study.purpose.MyCache;
 
 public class MyCacheElement<V> {
     private final V value;
