@@ -7,12 +7,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class UserDaoTester {
-    private UserDao<HibUser> demo;
+public class HibUserDaoTester {
+    private HibUserDao<HibUser> demo;
 
     @BeforeEach
     public void setUp() {
-        demo = new UserDaoImpl<>();
+        demo = new HibUserDaoImpl<>();
     }
 
     @Test

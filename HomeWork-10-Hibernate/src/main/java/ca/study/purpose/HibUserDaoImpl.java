@@ -13,14 +13,14 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.*;
 
-public class UserDaoImpl<T> implements UserDao<T> {
+public class HibUserDaoImpl<HibUser> implements HibUserDao<HibUser> {
     private static final String URL = "jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1";
     private final SessionFactory sessionFactory;
 
     public static void main(String[] args) {
-        UserDaoImpl<HibUser> demo = new UserDaoImpl<>();
+        HibUserDaoImpl<ca.study.purpose.HibUser> demo = new HibUserDaoImpl<>();
 
-        HibUser user1 = new HibUser();
+        ca.study.purpose.HibUser user1 = new ca.study.purpose.HibUser();
         user1.setAge(25);
         user1.setName("Simon");
 
@@ -41,7 +41,7 @@ public class UserDaoImpl<T> implements UserDao<T> {
         user1.setPhones(phones1);
 
 
-        HibUser user2 = new HibUser();
+        ca.study.purpose.HibUser user2 = new ca.study.purpose.HibUser();
         user2.setAge(25);
         user2.setName("Simon");
 
@@ -63,17 +63,17 @@ public class UserDaoImpl<T> implements UserDao<T> {
 
 
         demo.create(user1);
-        System.out.println("====================>" + demo.load(1, HibUser.class));
+        System.out.println("====================>" + demo.load(1, ca.study.purpose.HibUser.class));
         demo.create(user2);
-        System.out.println("====================>" + demo.load(2, HibUser.class));
+        System.out.println("====================>" + demo.load(2, ca.study.purpose.HibUser.class));
 
         user2.setName("James Bond");
         user2.setAge(51);
         demo.update(user2);
-        System.out.println("====================>" + demo.load(2, HibUser.class));
+        System.out.println("====================>" + demo.load(2, ca.study.purpose.HibUser.class));
     }
 
-    public UserDaoImpl() {
+    public HibUserDaoImpl() {
         Configuration configuration = new Configuration()
                 .configure("hibernate.cfg.xml");
 
@@ -81,7 +81,7 @@ public class UserDaoImpl<T> implements UserDao<T> {
                 .applySettings(configuration.getProperties()).build();
 
         Metadata metadata = new MetadataSources(serviceRegistry)
-                .addAnnotatedClass(HibUser.class)
+                .addAnnotatedClass(ca.study.purpose.HibUser.class)
                 .addAnnotatedClass(Address.class)
                 .addAnnotatedClass(Phone.class)
                 .getMetadataBuilder()
@@ -91,7 +91,7 @@ public class UserDaoImpl<T> implements UserDao<T> {
     }
 
     @Override
-    public void create(T obj) {
+    public void create(HibUser obj) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -104,7 +104,7 @@ public class UserDaoImpl<T> implements UserDao<T> {
     }
 
     @Override
-    public void update(T obj) {
+    public void update(HibUser obj) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -117,8 +117,8 @@ public class UserDaoImpl<T> implements UserDao<T> {
     }
 
     @Override
-    public Optional<T> load(long id, Class<T> clazz) {
-        T selected = null;
+    public Optional<HibUser> load(long id, Class<HibUser> clazz) {
+        HibUser selected = null;
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
