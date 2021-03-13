@@ -20,6 +20,7 @@
         <module>HomeWork-08-jsonObjectWriter</module>
         <module>HomeWork-09-HandmadeORM</module>
         <module>HomeWork-10-Hibernate</module>
+        <module>HomeWork-11-CacheEngine</module>
     </modules>
 
     <properties>
