@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class HibUserDaoTester {
-    private HibUserDao<HibUser> demo;
+    private HibUserDao demo;
 
     @BeforeEach
     public void setUp() {
-        demo = new HibUserDaoImpl<>();
+        demo = new HibUserDaoImpl();
     }
 
     @Test

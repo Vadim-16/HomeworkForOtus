@@ -12,12 +12,12 @@ public class CacheDemo {
         MyCacheEngine<Integer, String> cache = new MyCacheEngineImpl<>(size, 0, 0, true);
 
         for (int i = 0; i < 10; i++) {
-            cache.put(new MyCacheElement<>(i, "String: " + i));
+            cache.put(i, "String: " + i);
         }
 
         for (int i = 0; i < 10; i++) {
-            MyCacheElement<Integer, String> element = cache.get(i);
-            System.out.println("String for " + i + ": " + (element != null ? element.getValue() : "null"));
+            String value = cache.get(i);
+            System.out.println("String for " + i + ": " + value);
         }
 
         System.out.println("Cache hits: " + cache.getHitCount());
@@ -31,12 +31,12 @@ public class CacheDemo {
         MyCacheEngine<Integer, String> cache = new MyCacheEngineImpl<>(size, 1000, 0, false);
 
         for (int i = 0; i < size; i++) {
-            cache.put(new MyCacheElement<>(i, "String: " + i));
+            cache.put(i, "String: " + i);
         }
 
         for (int i = 0; i < size; i++) {
-            MyCacheElement<Integer, String> element = cache.get(i);
-            System.out.println("String for " + i + ": " + (element != null ? element.getValue() : "null"));
+            String value = cache.get(i);
+            System.out.println("String for " + i + ": " + value);
         }
 
         System.out.println("Cache hits: " + cache.getHitCount());
@@ -45,8 +45,8 @@ public class CacheDemo {
         Thread.sleep(1000);
 
         for (int i = 0; i < size; i++) {
-            MyCacheElement<Integer, String> element = cache.get(i);
-            System.out.println("String for " + i + ": " + (element != null ? element.getValue() : "null"));
+            String value = cache.get(i);
+            System.out.println("String for " + i + ": " + value);
         }
 
         System.out.println("Cache hits: " + cache.getHitCount());

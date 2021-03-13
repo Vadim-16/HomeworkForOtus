@@ -1,14 +1,12 @@
 package ca.study.purpose;
 
-public class MyCacheElement<K, V> {
-    private final K key;
+public class MyCacheElement<V> {
     private final V value;
     private final long creationTime;
     private long lastAccessTime;
 
 
-    public MyCacheElement(K key, V value) {
-        this.key = key;
+    public MyCacheElement(V value) {
         this.value = value;
         this.creationTime = getCurrentTime();
         this.lastAccessTime = getCurrentTime();
@@ -16,10 +14,6 @@ public class MyCacheElement<K, V> {
 
     protected long getCurrentTime() {
         return System.currentTimeMillis();
-    }
-
-    public K getKey() {
-        return key;
     }
 
     public V getValue() {

@@ -2,9 +2,9 @@ package ca.study.purpose;
 
 public interface MyCacheEngine<K, V> {
 
-    void put(MyCacheElement<K, V> element);
+    void put(K key, V value);
 
-    MyCacheElement<K, V> get(K key);
+    V get(K key);
 
     int getHitCount();
 

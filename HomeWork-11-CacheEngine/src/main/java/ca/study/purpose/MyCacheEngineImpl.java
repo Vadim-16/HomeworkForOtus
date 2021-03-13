@@ -4,7 +4,7 @@ import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.function.Function;
 
-public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V>{
+public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V> {
     private static final int TIME_THRESHOLD_MS = 5;
 
     private final int maxElements;
@@ -12,7 +12,7 @@ public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V>{
     private final long idleTimeMs;
     private final boolean isEternal;
 
-    private final Map<K, SoftReference<MyCacheElement<K, V>>> elements = new LinkedHashMap<>();
+    private final Map<K, SoftReference<MyCacheElement<V>>> elements = new LinkedHashMap<>();
     private final Timer timer = new Timer();
 
     private int hit = 0;
@@ -25,15 +25,13 @@ public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V>{
         this.isEternal = lifeTimeMs == 0 && idleTimeMs == 0 || isEternal;
     }
 
-    public void put(MyCacheElement<K, V> element) {
+    public void put(K key, V value) {
         if (elements.size() == maxElements) {
             K firstKey = elements.keySet().iterator().next();
             elements.remove(firstKey);
         }
-
-        K key = element.getKey();
+        MyCacheElement<V> element = new MyCacheElement<>(value);
         elements.put(key, new SoftReference<>(element));
-
         if (!isEternal) {
             if (lifeTimeMs != 0) {
                 TimerTask lifeTimerTask = getTimerTask(key, lifeElement -> lifeElement.getCreationTime() + lifeTimeMs);
@@ -46,17 +44,18 @@ public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V>{
         }
     }
 
-    public MyCacheElement<K, V> get(K key) {
-        SoftReference<MyCacheElement<K, V>> softRefElement = elements.get(key);
-        if (softRefElement == null) return null;
-        MyCacheElement<K, V> element = softRefElement.get();
-        if (element != null) {
-            hit++;
-            element.setAccessed();
-        } else {
-            miss++;
+    public V get(K key) {
+        SoftReference<MyCacheElement<V>> softRefElement = elements.get(key);
+        if (softRefElement != null) {
+            MyCacheElement<V> element = softRefElement.get();
+            if (element != null) {
+                hit++;
+                element.setAccessed();
+                return element.getValue();
+            }
         }
-        return element;
+        miss++;
+        return null;
     }
 
     public int getHitCount() {
@@ -73,11 +72,11 @@ public class MyCacheEngineImpl<K, V> implements MyCacheEngine<K, V>{
         timer.cancel();
     }
 
-    private TimerTask getTimerTask(final K key, Function<MyCacheElement<K, V>, Long> timeFunction) {
+    private TimerTask getTimerTask(final K key, Function<MyCacheElement<V>, Long> timeFunction) {
         return new TimerTask() {
             @Override
             public void run() {
-                MyCacheElement<K, V> element = elements.get(key).get();
+                MyCacheElement<V> element = elements.get(key).get();
                 if (element == null || isT1BeforeT2(timeFunction.apply(element), System.currentTimeMillis())) {
                     elements.remove(key);
                     this.cancel();

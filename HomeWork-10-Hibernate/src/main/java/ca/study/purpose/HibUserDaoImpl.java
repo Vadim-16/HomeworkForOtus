@@ -13,12 +13,12 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.*;
 
-public class HibUserDaoImpl<HibUser> implements HibUserDao<HibUser> {
+public class HibUserDaoImpl implements HibUserDao {
     private static final String URL = "jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1";
     private final SessionFactory sessionFactory;
 
     public static void main(String[] args) {
-        HibUserDaoImpl<ca.study.purpose.HibUser> demo = new HibUserDaoImpl<>();
+        HibUserDaoImpl demo = new HibUserDaoImpl();
 
         ca.study.purpose.HibUser user1 = new ca.study.purpose.HibUser();
         user1.setAge(25);
