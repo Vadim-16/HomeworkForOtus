@@ -16,7 +16,8 @@ public class TesterHibUserWithCache {
 
     @BeforeEach
     public void setUp() {
-        demo = new HibUserDaoImpl();
+        MyCacheEngineImpl<Long, HibUser> cache = new MyCacheEngineImpl<>(5, 0, 0, true);
+        demo = new HibUserDaoImpl(cache);
     }
 
     @Test
@@ -72,7 +73,6 @@ public class TesterHibUserWithCache {
         long loadTime1 = System.currentTimeMillis() - beginLoad1;
         System.out.println(">>>>>>>>>>>>>>>>>>>Load time: " + loadTime1 + "ms");
 
-        demo.setCache(new MyCacheEngineImpl<>(5, 0, 0, true));
         demo.create(user2);
 
         long beginLoad2 = System.currentTimeMillis();
@@ -102,6 +102,5 @@ public class TesterHibUserWithCache {
         long loadTime3 = System.currentTimeMillis() - beginLoad3;
         System.out.println(">>>>>>>>>>>>>>>>>>>Load time with cache: " + loadTime3 + "ms");
         assertTrue(loadTime3 < loadTime1);
-        demo.getCache().dispose();
     }
 }

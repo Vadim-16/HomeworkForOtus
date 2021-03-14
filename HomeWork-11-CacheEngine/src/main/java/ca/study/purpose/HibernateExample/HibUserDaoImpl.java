@@ -21,7 +21,8 @@ public class HibUserDaoImpl implements HibUserDao {
     private MyCacheEngine<Long, HibUser> cache;
 
     public static void main(String[] args) {
-        HibUserDaoImpl demo = new HibUserDaoImpl();
+        MyCacheEngineImpl<Long, HibUser> cache = new MyCacheEngineImpl<>(5, 0, 0, true);
+        HibUserDaoImpl demo = new HibUserDaoImpl(cache);
 
         HibUser user1 = demo.buildUser1();
         HibUser user2 = demo.buildUser2();
@@ -31,7 +32,6 @@ public class HibUserDaoImpl implements HibUserDao {
         System.out.println("====================>" + demo.load(1, HibUser.class));
         System.out.println("====================>Load time: " + (System.currentTimeMillis() - beginTime1) + "ms");
 
-        demo.setCache(new MyCacheEngineImpl<>(5, 0, 0, true));
         demo.create(user2);
         long beginTime2 = System.currentTimeMillis();
         System.out.println("====================>" + demo.load(2, HibUser.class));
@@ -46,7 +46,7 @@ public class HibUserDaoImpl implements HibUserDao {
         demo.cache.dispose();
     }
 
-    public HibUserDaoImpl() {
+    public HibUserDaoImpl(MyCacheEngine<Long, HibUser> cache) {
         Configuration configuration = new Configuration()
                 .configure("hibernate.cfg.xml");
 
@@ -61,16 +61,17 @@ public class HibUserDaoImpl implements HibUserDao {
                 .build();
 
         sessionFactory = metadata.getSessionFactoryBuilder().build();
+        this.cache = cache;
     }
 
     @Override
     public void create(HibUser hibUser) {
-        if (cache != null) cache.put(hibUser.getId(), hibUser);
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.save(hibUser);
             transaction.commit();
+            cache.put(hibUser.getId(), hibUser);
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
@@ -79,12 +80,12 @@ public class HibUserDaoImpl implements HibUserDao {
 
     @Override
     public void update(HibUser hibUser) {
-        if (cache != null) cache.put(hibUser.getId(), hibUser);
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             session.update(hibUser);
             transaction.commit();
+            cache.put(hibUser.getId(), hibUser);
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
@@ -93,12 +94,8 @@ public class HibUserDaoImpl implements HibUserDao {
 
     @Override
     public Optional<HibUser> load(long id, Class<HibUser> clazz) {
-        if (cache != null) {
-            HibUser user = cache.get(id);
-            if (user != null) {
-                return Optional.of(user);
-            }
-        }
+        HibUser user = cache.get(id);
+        if (user != null) return Optional.of(user);
         HibUser selected = null;
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
@@ -110,14 +107,6 @@ public class HibUserDaoImpl implements HibUserDao {
             e.printStackTrace();
         }
         return Optional.ofNullable(selected);
-    }
-
-    public void setCache(MyCacheEngine<Long, HibUser> cache) {
-        this.cache = cache;
-    }
-
-    public MyCacheEngine<Long, HibUser> getCache() {
-        return cache;
     }
 
     public HibUser buildUser1() {
