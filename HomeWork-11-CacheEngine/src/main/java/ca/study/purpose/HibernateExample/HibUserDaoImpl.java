@@ -101,7 +101,7 @@ public class HibUserDaoImpl implements HibUserDao {
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             selected = session.get(clazz, id);
-            if (cache != null) cache.put(id, selected);
+            cache.put(id, selected);
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
