@@ -21,6 +21,7 @@
         <module>HomeWork-09-HandmadeORM</module>
         <module>HomeWork-10-Hibernate</module>
         <module>HomeWork-11-CacheEngine</module>
+        <module>HomeWork-12-WebServer</module>
     </modules>
 
     <properties>
