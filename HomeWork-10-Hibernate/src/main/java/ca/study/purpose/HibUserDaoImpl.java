@@ -129,4 +129,8 @@ public class HibUserDaoImpl implements HibUserDao {
         }
         return Optional.ofNullable(selected);
     }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 }

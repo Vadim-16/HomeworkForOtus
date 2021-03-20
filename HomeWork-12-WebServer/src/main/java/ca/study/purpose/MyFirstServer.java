@@ -1,5 +1,6 @@
 package ca.study.purpose;
 
+import ca.study.purpose.Servlets.Users;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -16,21 +17,28 @@ import org.eclipse.jetty.util.security.Constraint;
 import ca.study.purpose.Servlets.Data;
 import ca.study.purpose.Servlets.PublicInfo;
 import ca.study.purpose.Servlets.PrivateInfo;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Чтобы запустить пример из jar файла, положите в каталог с jar-файлом файл  realm.properties
  */
 
-public class MyServerDemo {
+public class MyFirstServer {
     private final static int PORT = 8080;
+    private HibUserDaoImpl hibUserDaoImpl;
 
     public static void main(String[] args) throws Exception {
-        new MyServerDemo().start();
+        new MyFirstServer().start();
     }
 
     private void start() throws Exception {
@@ -40,7 +48,11 @@ public class MyServerDemo {
     }
 
     public Server createServer(int port) throws MalformedURLException {
+
+        this.hibUserDaoImpl = new HibUserDaoImpl();
+
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.addServlet(new ServletHolder(new Users(hibUserDaoImpl)), "/usersInfo");
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
         context.addServlet(new ServletHolder(new Data()), "/data/*");
@@ -61,7 +73,7 @@ public class MyServerDemo {
         resourceHandler.setDirectoriesListed(false);
         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
-        URL fileDir = MyServerDemo.class.getClassLoader().getResource("static");
+        URL fileDir = MyFirstServer.class.getClassLoader().getResource("static");
         if (fileDir == null) {
             throw new RuntimeException("File Directory not found");
         }
@@ -90,7 +102,7 @@ public class MyServerDemo {
         }
         if (propFile == null) {
             System.out.println("local realm config not found, looking into Resources");
-            propFile = MyServerDemo.class.getClassLoader().getResource("realm.properties");
+            propFile = MyFirstServer.class.getClassLoader().getResource("realm.properties");
         }
 
         if (propFile == null) {
