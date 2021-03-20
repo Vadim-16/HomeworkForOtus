@@ -89,6 +89,10 @@ public class MyFirstServer {
         mapping2.setPathSpec("/usersInfo/*");
         mapping2.setConstraint(constraint);
 
+        List<ConstraintMapping> mappingList = new ArrayList<>();
+        mappingList.add(mapping1);
+        mappingList.add(mapping2);
+
         ConstraintSecurityHandler security = new ConstraintSecurityHandler();
         //как декодировать стороку с юзером:паролем https://www.base64decode.org/
         security.setAuthenticator(new BasicAuthenticator());
@@ -109,10 +113,6 @@ public class MyFirstServer {
 
         security.setLoginService(new HashLoginService("MyRealm", propFile.getPath()));
         security.setHandler(new HandlerList(context));
-
-        List<ConstraintMapping> mappingList = new ArrayList<>();
-        mappingList.add(mapping1);
-        mappingList.add(mapping2);
         security.setConstraintMappings(mappingList);
 
         return security;
