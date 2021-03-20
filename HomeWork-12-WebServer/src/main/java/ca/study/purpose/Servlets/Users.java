@@ -2,7 +2,6 @@ package ca.study.purpose.Servlets;
 
 import ca.study.purpose.HibUser;
 import ca.study.purpose.HibUserDaoImpl;
-import com.google.gson.Gson;
 import org.hibernate.Session;
 
 import javax.persistence.criteria.CriteriaQuery;
