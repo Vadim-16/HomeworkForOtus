@@ -26,9 +26,6 @@ public class AddUser extends HttpServlet {
         user.setAge(Long.parseLong(age));
         hibUserDaoImpl.create(user);
 
-        String contextPath = request.getContextPath();
-        System.out.println(contextPath);
-
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
