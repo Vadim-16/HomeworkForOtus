@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class Users extends HttpServlet {
-    private static final Gson gson = new Gson();
     private HibUserDaoImpl hibUserDaoImpl;
 
     public Users(HibUserDaoImpl hibUserDaoImpl) {
@@ -25,7 +24,8 @@ public class Users extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         StringBuilder responseBuilder = new StringBuilder();
-        responseBuilder.append("<html>\n  <p>Users</p>\n    <table>\n      <tr>\n        <th>Id</th>\n        <th>Name</th>\n        <th>Age</th>\n      </tr>\n");
+        responseBuilder.append("<html>\n<head><title>Users table</title></head>  <h1>Users Table</h1>\n" +
+                "    <table>\n      <tr>\n        <th>Id</th>\n        <th>Name</th>\n        <th>Age</th>\n      </tr>\n");
 
         Session session = hibUserDaoImpl.getSessionFactory().openSession();
         CriteriaQuery<HibUser> query = session.getCriteriaBuilder().createQuery(HibUser.class);
@@ -37,7 +37,12 @@ public class Users extends HttpServlet {
                     .append("        <td>").append(hibUser.getName()).append("</td>\n")
                     .append("        <td>").append(hibUser.getAge()).append("</td>\n      </tr>\n");
         }
-        responseBuilder.append("    </table>\n</html>");
+        responseBuilder.append("    </table><br><br>");
+
+        responseBuilder.append("<form action=\"/userCreator.html\">\n" +
+                "  <input type=\"submit\" value=\"add user\">\n" +
+                "</form>" +
+                "</html>");
 
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);

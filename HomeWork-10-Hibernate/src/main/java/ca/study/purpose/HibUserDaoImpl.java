@@ -91,11 +91,11 @@ public class HibUserDaoImpl implements HibUserDao {
     }
 
     @Override
-    public void create(HibUser obj) {
+    public void create(HibUser user) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            session.save(obj);
+            session.save(user);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -104,11 +104,11 @@ public class HibUserDaoImpl implements HibUserDao {
     }
 
     @Override
-    public void update(HibUser obj) {
+    public void update(HibUser user) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            session.update(obj);
+            session.update(user);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

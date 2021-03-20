@@ -1,6 +1,6 @@
 package ca.study.purpose;
 
-import ca.study.purpose.Servlets.Users;
+import ca.study.purpose.Servlets.*;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -14,18 +14,11 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
-import ca.study.purpose.Servlets.Data;
-import ca.study.purpose.Servlets.PublicInfo;
-import ca.study.purpose.Servlets.PrivateInfo;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,6 +45,7 @@ public class MyFirstServer {
         this.hibUserDaoImpl = new HibUserDaoImpl();
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.addServlet(new ServletHolder(new AddUser(hibUserDaoImpl)), "/usersInfo/addUser/*");
         context.addServlet(new ServletHolder(new Users(hibUserDaoImpl)), "/usersInfo");
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
@@ -85,18 +79,22 @@ public class MyFirstServer {
         Constraint constraint = new Constraint();
         constraint.setName("auth");
         constraint.setAuthenticate(true);
-        constraint.setRoles(new String[]{"user", "admin"});
+        constraint.setRoles(new String[]{"admin"});
 
-        ConstraintMapping mapping = new ConstraintMapping();
-        mapping.setPathSpec("/privateInfo/*");
-        mapping.setConstraint(constraint);
+        ConstraintMapping mapping1 = new ConstraintMapping();
+        mapping1.setPathSpec("/privateInfo/*");
+        mapping1.setConstraint(constraint);
+
+        ConstraintMapping mapping2 = new ConstraintMapping();
+        mapping2.setPathSpec("/usersInfo/*");
+        mapping2.setConstraint(constraint);
 
         ConstraintSecurityHandler security = new ConstraintSecurityHandler();
         //как декодировать стороку с юзером:паролем https://www.base64decode.org/
         security.setAuthenticator(new BasicAuthenticator());
 
         URL propFile = null;
-        File realmFile = new File("./realm.properties");
+        File realmFile = new File(".\\HomeWork-12-WebServer\\src\\main\\resources\\realm.properties");
         if (realmFile.exists()) {
             propFile = realmFile.toURI().toURL();
         }
@@ -111,7 +109,11 @@ public class MyFirstServer {
 
         security.setLoginService(new HashLoginService("MyRealm", propFile.getPath()));
         security.setHandler(new HandlerList(context));
-        security.setConstraintMappings(Collections.singletonList(mapping));
+
+        List<ConstraintMapping> mappingList = new ArrayList<>();
+        mappingList.add(mapping1);
+        mappingList.add(mapping2);
+        security.setConstraintMappings(mappingList);
 
         return security;
     }
