@@ -16,15 +16,7 @@ public class AddUser extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doPost(request, response);
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.sendRedirect("/usersInfo");
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HibUser user = new HibUser();
         String name1 = request.getParameter("name");
         user.setName(name1);
@@ -36,5 +28,8 @@ public class AddUser extends HttpServlet {
             return;
         }
         if (user.getName() != null || user.getAge() != 0) hibUserDao.create(user);
+        response.setContentType("text/html");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.sendRedirect("/usersInfo");
     }
 }
