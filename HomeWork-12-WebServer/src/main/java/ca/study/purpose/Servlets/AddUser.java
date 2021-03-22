@@ -25,25 +25,16 @@ public class AddUser extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        if (request != null) {
-            String[] params = request.getQueryString().split("&");
-            HibUser user = new HibUser();
-            for (String param : params) {
-                if (param.startsWith("name") && !param.endsWith("=")) {
-                    String name = param.split("=")[1];
-                    user.setName(name);
-                }
-                if (param.startsWith("age") && !param.endsWith("=")) {
-                    String age = param.split("=")[1];
-                    try {
-                        user.setAge(Long.parseLong(age));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        return;
-                    }
-                }
-            }
-            if (user.getName() != null && user.getAge() != 0) hibUserDao.create(user);
+        HibUser user = new HibUser();
+        String name1 = request.getParameter("name");
+        user.setName(name1);
+        String age1 = request.getParameter("age");
+        try {
+            user.setAge(Long.parseLong(age1));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
         }
+        if (user.getName() != null || user.getAge() != 0) hibUserDao.create(user);
     }
 }
