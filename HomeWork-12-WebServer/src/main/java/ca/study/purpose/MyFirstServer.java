@@ -37,9 +37,9 @@ public class MyFirstServer {
 
     public Server createServer(int port, HibUserDao userDao) throws MalformedURLException {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new UserCreator()), "/usersInfo/userCreator/*");
-        context.addServlet(new ServletHolder(new AddUser(userDao)), "/usersInfo/addUser/*");
-        context.addServlet(new ServletHolder(new Users(userDao)), "/usersInfo");
+//        context.addServlet(new ServletHolder(new UserCreator()), "/usersInfo/userCreator/*");
+//        context.addServlet(new ServletHolder(new AddUser(userDao)), "/usersInfo/addUser/*");
+        context.addServlet(new ServletHolder(new Users(userDao)), "/usersInfo/*");
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
         context.addServlet(new ServletHolder(new Data()), "/data/*");
