@@ -11,6 +11,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.*;
 
 public class HibUserDaoImpl implements HibUserDao {
@@ -88,6 +89,23 @@ public class HibUserDaoImpl implements HibUserDao {
                 .build();
 
         sessionFactory = metadata.getSessionFactoryBuilder().build();
+    }
+
+    @Override
+    public List<HibUser> getHibUsers() {
+        Transaction transaction = null;
+        List<HibUser> resultList = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            CriteriaQuery<HibUser> query = session.getCriteriaBuilder().createQuery(HibUser.class);
+            query.from(HibUser.class);
+            resultList = session.createQuery(query).getResultList();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        }
+        return resultList;
     }
 
     @Override

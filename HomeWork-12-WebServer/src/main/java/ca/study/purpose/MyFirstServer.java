@@ -21,31 +21,25 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Чтобы запустить пример из jar файла, положите в каталог с jar-файлом файл  realm.properties
- */
 
 public class MyFirstServer {
     private final static int PORT = 8080;
-    private HibUserDaoImpl hibUserDaoImpl;
 
     public static void main(String[] args) throws Exception {
         new MyFirstServer().start();
     }
 
     private void start() throws Exception {
-        Server server = createServer(PORT);
+        Server server = createServer(PORT, new HibUserDaoImpl());
         server.start();
         server.join();
     }
 
-    public Server createServer(int port) throws MalformedURLException {
-
-        this.hibUserDaoImpl = new HibUserDaoImpl();
-
+    public Server createServer(int port, HibUserDao hibUserDao) throws MalformedURLException {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new AddUser(hibUserDaoImpl)), "/usersInfo/addUser/*");
-        context.addServlet(new ServletHolder(new Users(hibUserDaoImpl)), "/usersInfo");
+        context.addServlet(new ServletHolder(new UserCreator()), "/usersInfo/userCreator/*");
+        context.addServlet(new ServletHolder(new AddUser(hibUserDao)), "/usersInfo/addUser/*");
+        context.addServlet(new ServletHolder(new Users(hibUserDao)), "/usersInfo");
         context.addServlet(new ServletHolder(new PublicInfo()), "/publicInfo");
         context.addServlet(new ServletHolder(new PrivateInfo()), "/privateInfo");
         context.addServlet(new ServletHolder(new Data()), "/data/*");
@@ -97,7 +91,7 @@ public class MyFirstServer {
         security.setAuthenticator(new BasicAuthenticator());
 
         URL propFile = null;
-        File realmFile = new File(".\\HomeWork-12-WebServer\\src\\main\\resources\\realm.properties");
+        File realmFile = new File(".\\realm.properties");
         if (realmFile.exists()) {
             propFile = realmFile.toURI().toURL();
         }

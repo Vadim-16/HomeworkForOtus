@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+    <head>
+        <title>User Creator</title>
+    </head>
+    <body>
+        <h1>User Creator</h1>
+        <form action="/usersInfo/addUser/">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="age">Age:</label>
+            <input type="text" id="age" name="age"><br><br>
+            <input type="submit" value="add user">
+        </form>
+        <p>Click the "add user" button and the form-data will be sent to a page on the
+            server called "/usersInfo/addUser/".</p>
+    </body>
+</html>

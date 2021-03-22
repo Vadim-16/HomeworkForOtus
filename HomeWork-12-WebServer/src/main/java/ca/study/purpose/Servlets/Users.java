@@ -1,10 +1,8 @@
 package ca.study.purpose.Servlets;
 
 import ca.study.purpose.HibUser;
-import ca.study.purpose.HibUserDaoImpl;
-import org.hibernate.Session;
+import ca.study.purpose.HibUserDao;
 
-import javax.persistence.criteria.CriteriaQuery;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,10 +11,10 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class Users extends HttpServlet {
-    private HibUserDaoImpl hibUserDaoImpl;
+    private final HibUserDao hibUserDao;
 
-    public Users(HibUserDaoImpl hibUserDaoImpl) {
-        this.hibUserDaoImpl = hibUserDaoImpl;
+    public Users(HibUserDao hibUserDao) {
+        this.hibUserDao = hibUserDao;
     }
 
     @Override
@@ -26,10 +24,7 @@ public class Users extends HttpServlet {
         responseBuilder.append("<html>\n<head><title>Users table</title></head>  <h1>Users Table</h1>\n" +
                 "    <table>\n      <tr>\n        <th>Id</th>\n        <th>Name</th>\n        <th>Age</th>\n      </tr>\n");
 
-        Session session = hibUserDaoImpl.getSessionFactory().openSession();
-        CriteriaQuery<HibUser> query = session.getCriteriaBuilder().createQuery(HibUser.class);
-        query.from(HibUser.class);
-        List<HibUser> resultList = session.createQuery(query).getResultList();
+        List<HibUser> resultList = hibUserDao.getHibUsers();
 
         for (HibUser hibUser : resultList) {
             responseBuilder.append("      <tr>\n        <td>").append(hibUser.getId()).append("</td>\n")
@@ -38,7 +33,7 @@ public class Users extends HttpServlet {
         }
         responseBuilder.append("    </table><br><br>");
 
-        responseBuilder.append("<form action=\"/userCreator.html\">\n" +
+        responseBuilder.append("<form action=\"/usersInfo/userCreator/\">\n" +
                 "  <input type=\"submit\" value=\"add user\">\n" +
                 "</form>" +
                 "</html>");
@@ -47,6 +42,7 @@ public class Users extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter printWriter = response.getWriter();
         printWriter.print(responseBuilder.toString());
+
         printWriter.flush();
     }
 }
