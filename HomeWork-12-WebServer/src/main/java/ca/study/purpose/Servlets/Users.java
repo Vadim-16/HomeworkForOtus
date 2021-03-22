@@ -11,10 +11,10 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class Users extends HttpServlet {
-    private final HibUserDao hibUserDao;
+    private final HibUserDao userDao;
 
-    public Users(HibUserDao hibUserDao) {
-        this.hibUserDao = hibUserDao;
+    public Users(HibUserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Users extends HttpServlet {
         responseBuilder.append("<html>\n<head><title>Users table</title></head>  <h1>Users Table</h1>\n" +
                 "    <table>\n      <tr>\n        <th>Id</th>\n        <th>Name</th>\n        <th>Age</th>\n      </tr>\n");
 
-        List<HibUser> resultList = hibUserDao.getHibUsers();
+        List<HibUser> resultList = userDao.getHibUsers();
 
         for (HibUser hibUser : resultList) {
             responseBuilder.append("      <tr>\n        <td>").append(hibUser.getId()).append("</td>\n")

@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AddUser extends HttpServlet {
-    private final HibUserDao hibUserDao;
+    private final HibUserDao userDao;
 
-    public AddUser(HibUserDao hibUserDao) {
-        this.hibUserDao = hibUserDao;
+    public AddUser(HibUserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class AddUser extends HttpServlet {
             ex.printStackTrace();
             return;
         }
-        if (user.getName() != null || user.getAge() != 0) hibUserDao.create(user);
+        if (user.getName() != null || user.getAge() != 0) userDao.create(user);
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
         response.sendRedirect("/usersInfo");
